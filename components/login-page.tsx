@@ -58,7 +58,7 @@ export function LoginForm({
         By clicking continue, you agree to our{' '}
         <a
           target='_blank'
-          href='https://github.com/palmerusaf/ASU-Capstone/blob/main/PRIVACY-POLICY.md'
+          href='https://github.com/palmerusaf/job-sourcerer/blob/main/PRIVACY-POLICY.md'
         >
           Privacy Policy
         </a>
