@@ -2,19 +2,24 @@ import * as Card from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { JSX, useEffect, useState } from 'react';
 
-export function DisplaySettings(): JSX.Element {
-  const [active, setActive] = useState(
+export function useDarkMode() {
+  const [isDark, setIsDark] = useState(
     localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    (!('theme' in localStorage) &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
   );
   useEffect(() => {
     if (!('theme' in localStorage)) {
-      localStorage.setItem('theme', active ? 'dark' : 'light');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
-    localStorage.theme = active ? 'dark' : 'light';
-    document.documentElement.classList.toggle('dark', active);
-  }, [active]);
+    localStorage.theme = isDark ? 'dark' : 'light';
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [isDark]);
+  return { isDark, setIsDark };
+}
+
+export function DisplaySettings(): JSX.Element {
+  const { isDark, setIsDark } = useDarkMode();
 
   return (
     <Card.Card className='flex flex-col items-center mx-auto w-full max-w-2xl'>
@@ -26,10 +31,10 @@ export function DisplaySettings(): JSX.Element {
       <Card.CardContent className='flex gap-2'>
         <Switch
           id='airplane-mode'
-          checked={active}
+          checked={isDark}
           onCheckedChange={(e: {
             valueOf: () => boolean | ((prevState: boolean) => boolean);
-          }) => setActive(e.valueOf())}
+          }) => setIsDark(e.valueOf())}
         />
         <label htmlFor='airplane-mode'>Dark Mode</label>
       </Card.CardContent>
