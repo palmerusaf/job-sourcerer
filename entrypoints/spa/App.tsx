@@ -12,6 +12,7 @@ import { Toaster } from 'sonner';
 import { devMenu } from '../../components/dev-menu';
 import { PrevAppsPage } from '@/components/prev-apps-page';
 import JobsTimelinePage from '@/components/jobs-timeline-page';
+import { useDarkMode } from '@/components/display-settings';
 import { ResumeStatusGraph } from '@/components/ResumeStatusGraph.tsx';
 import { resumes } from '@/utils/db/schema.ts';
 import { DeleteResumePage } from '@/components/delete-resume-page';
@@ -26,12 +27,7 @@ export default function App() {
   // disable auth
   // const session = useAuth();
   // const loggedIn = session !== null;
-  useEffect(() => {
-    document.documentElement.classList.toggle(
-      'dark',
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-    );
-  }, []);
+  useDarkMode();
   return (
     <QueryProvider>
       <Toaster richColors position='top-center' />

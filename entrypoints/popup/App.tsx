@@ -1,14 +1,16 @@
 import '@/assets/tailwind.css';
 import { useState } from 'react';
+import logo from '/wxt.svg';
 import { PublicPath } from 'wxt/browser';
-import './App.css';
-import { JobSelectType, jobTable } from '@/utils/db/schema';
 import { parseFetchedJob } from '@/utils/popup/popup-utils';
-import { db } from '@/utils/db/db';
 import { saveJobData } from '@/utils/db/saveJobData';
+import { useDarkMode } from '@/components/display-settings';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 function App() {
   const [status, setStatus] = useState('');
+  useDarkMode();
 
   async function openSPA() {
     await browser.tabs.create({
@@ -53,14 +55,21 @@ function App() {
   }
 
   return (
-    <>
-      <h1>Job Sourcerer</h1>
-      <div className='card'>
-        <button onClick={saveJob}>Save Job</button>
-        <p id='status'>{status}</p>
-      </div>
-      <button onClick={openSPA}>Dashboard</button>
-    </>
+    <Card className='w-xs h-64 p-6 px-12 gap-2 flex flex-col'>
+      <CardHeader>
+        <CardTitle className='text-xl items-center flex gap-2'>
+          <img src={logo} className='size-9' />
+          Job Sourcerer
+        </CardTitle>
+      </CardHeader>
+      <AsyncButton loadingText='Saving Job...' onClickAsync={saveJob}>
+        Save Job
+      </AsyncButton>
+      <p id='status'>{status}</p>
+      <Button variant={'secondary'} onClick={openSPA}>
+        Dashboard
+      </Button>
+    </Card>
   );
 }
 
