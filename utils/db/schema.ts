@@ -10,7 +10,9 @@ import {
 import { z } from 'zod';
 import { relations } from 'drizzle-orm';
 
-export type JobSiteNameType = 'linkedin' | 'handshake'
+export const jobSiteNames = ['linkedin', 'handshake'] as const;
+
+export type JobSiteNameType = (typeof jobSiteNames)[number];
 
 export const jobStatus = [
   'search result',

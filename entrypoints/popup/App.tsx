@@ -1,8 +1,8 @@
 import '@/assets/tailwind.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import logo from '/wxt.svg';
 import { PublicPath } from 'wxt/browser';
-import { parseFetchedJob } from '@/utils/popup/popup-utils';
+import { getJobSiteName, parseFetchedJob } from '@/utils/popup/popup-utils';
 import { saveJobData } from '@/utils/db/saveJobData';
 import { useDarkMode } from '@/components/display-settings';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +10,18 @@ import { Button } from '@/components/ui/button';
 
 function App() {
   const [status, setStatus] = useState('');
+  const [activeTab, setActiveTab] = useState<chrome.tabs.Tab | null>(null);
   useDarkMode();
+  useEffect(() => {
+    browser.tabs
+      .query({
+        active: true,
+        currentWindow: true,
+      })
+      .then(([t]) => setActiveTab(t));
+  }, []);
+  const isSupportedSite =
+    activeTab?.url !== undefined && getJobSiteName(activeTab.url) !== null;
 
   async function openSPA() {
     await browser.tabs.create({
@@ -20,10 +31,6 @@ function App() {
   }
 
   async function saveJob() {
-    const [activeTab] = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
     if (!activeTab?.id) return setStatus('No active tab found.');
 
     const jobId = await browser.tabs.sendMessage(activeTab.id, {
@@ -49,7 +56,7 @@ function App() {
     setStatus(!saveOk ? 'Failed to save job.' : 'Job Saved');
 
     if (saveOk)
-      await browser.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: 'close-spa',
       });
   }
@@ -62,9 +69,11 @@ function App() {
           Job Sourcerer
         </CardTitle>
       </CardHeader>
-      <AsyncButton loadingText='Saving Job...' onClickAsync={saveJob}>
-        Save Job
-      </AsyncButton>
+      {(isSupportedSite && (
+        <AsyncButton loadingText='Saving Job...' onClickAsync={saveJob}>
+          Save Job
+        </AsyncButton>
+      )) || <Button disabled>Unable to Save</Button>}
       <p id='status'>{status}</p>
       <Button variant={'secondary'} onClick={openSPA}>
         Dashboard

@@ -1,5 +1,9 @@
-import { JobSelectType, JobSiteNameType, jobTable } from '../db/schema';
-import { onsiteData, remoteData } from './popup-save-job.test';
+import {
+  JobInsertType,
+  jobSiteNames,
+  JobSiteNameType,
+  jobTable,
+} from '../db/schema';
 
 export function getHandshakeJobId(url: string): number | null {
   const segments = new URL(url).pathname.split('/').filter(Boolean);
@@ -13,9 +17,7 @@ export function getHandshakeJobId(url: string): number | null {
   return null;
 }
 
-export function parseFetchedJob(
-  data: unknown
-): typeof jobTable.$inferInsert | null {
+export function parseFetchedJob(data: unknown): JobInsertType | null {
   // First check that it's an object
   if (!data || typeof data !== 'object') return null;
 
@@ -68,7 +70,6 @@ export function getJobSiteName(url: string): JobSiteNameType | null {
     return null;
   }
   if (baseUrl === null) return null;
-  const jobSiteNames: JobSiteNameType[] = ['linkedin', 'handshake'];
   for (const n of jobSiteNames) if (baseUrl.includes(n)) return n;
   return null;
 }
