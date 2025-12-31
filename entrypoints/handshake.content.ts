@@ -1,18 +1,18 @@
 import { insertTrackedIcon } from '@/utils/insertTrackedIcon';
 import { observeUrlChanges } from '@/utils/observeUrlChanges';
-import { getJobId } from '@/utils/popup/popup-utils';
+import { getHandshakeJobId } from '@/utils/popup/popup-utils';
 
 // Finds and returns the selected job posting url in users active (https://asu.joinhandshake.com/stu/postings) window.
 export default defineContentScript({
   matches: ['*://*.joinhandshake.com/*'],
   main() {
-    browser.runtime.onMessage.addListener(function (
+    browser.runtime.onMessage.addListener(function(
       request,
       sender,
       sendResponse
     ) {
       if (request.message === 'Handshake-getJobId') {
-        sendResponse(getJobId(location.href));
+        sendResponse(getHandshakeJobId(location.href));
       }
       if (request.message === 'Handshake-getToken') {
         const token = document
@@ -23,7 +23,7 @@ export default defineContentScript({
     });
 
     observeUrlChanges(async () => {
-      const jobId = getJobId(location.href);
+      const jobId = getHandshakeJobId(location.href);
       if (!jobId) return;
 
       console.log('Found job ID:', jobId);

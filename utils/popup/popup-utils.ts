@@ -1,7 +1,7 @@
 import { JobSelectType, jobTable } from '../db/schema';
 import { onsiteData, remoteData } from './popup-save-job.test';
 
-export function getJobId(url: string): number | null {
+export function getHandshakeJobId(url: string): number | null {
   const segments = new URL(url).pathname.split('/').filter(Boolean);
   if (
     segments.length === 2 &&
