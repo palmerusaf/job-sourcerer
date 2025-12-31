@@ -73,7 +73,7 @@ A centralized job application platform.
 
 [![Job Sourcerer Prototype Screen Shot][product-screenshot]](https://github.com/palmerusaf/job-sourcerer)
 
-Simplify the job/internship application process by automating search, application and tracking of jobs.
+Simplify the job/internship application process by centralizing jobs/resumes in one place.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
