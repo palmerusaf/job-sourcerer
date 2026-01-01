@@ -41,17 +41,11 @@ const JobStatusStreamGraph: React.FC<JobStatusStreamGraphProps> = ({
             dataKey='date'
             stroke='#797d85'
             style={{ fontSize: '12px' }}
-            tickFormatter={(value) => {
-              const date = new Date(value);
-              return date.toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              });
-            }}
+            tickFormatter={(v) => new Date(v).toLocaleDateString()}
           />
           <Tooltip
+            labelFormatter={(v) => new Date(v).toLocaleDateString()}
+            labelStyle={{ color: 'black' }}
             contentStyle={{
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               border: '1px solid #797d85',
@@ -80,7 +74,7 @@ const JobStatusStreamGraph: React.FC<JobStatusStreamGraphProps> = ({
 
 export default function JobsTimelinePage() {
   const [data, setData] = useState<
-    Array<{ date: string;[key: string]: string | number }>
+    Array<{ date: string; [key: string]: string | number }>
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
