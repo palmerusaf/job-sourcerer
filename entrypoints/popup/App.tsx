@@ -74,7 +74,9 @@ function App() {
           Save Job
         </AsyncButton>
       )) || <Button disabled>Unable to Save</Button>}
-      <p id='status'>{status}</p>
+      <p id='status' className='text-center'>
+        {status}
+      </p>
       <Button variant={'secondary'} onClick={openSPA}>
         Dashboard
       </Button>
