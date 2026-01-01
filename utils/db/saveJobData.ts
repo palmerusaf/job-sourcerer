@@ -1,6 +1,7 @@
+import { eq } from 'drizzle-orm';
 import { addTrackedJob } from '../storage/trackedJobs';
 import { db } from './db';
-import { jobStatusHistoryTable, jobTable } from './schema';
+import { JobSiteNameType, jobStatusHistoryTable, jobTable } from './schema';
 
 export async function saveJobData(jobData: typeof jobTable.$inferInsert) {
   try {
@@ -19,4 +20,18 @@ export async function saveJobData(jobData: typeof jobTable.$inferInsert) {
   } catch (error) {
     return false;
   }
+}
+
+export async function alreadySaved({
+  jobSite,
+  jobId,
+}: {
+  jobSite: JobSiteNameType;
+  jobId: number;
+}) {
+  const res = await db
+    .select()
+    .from(jobTable)
+    .where(eq(jobTable.jobIdFromSite, `${jobSite}-${jobId}`));
+  return res.length !== 0;
 }

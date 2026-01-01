@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import logo from '/wxt.svg';
 import { PublicPath } from 'wxt/browser';
 import { getJobSiteName, parseFetchedJob } from '@/utils/popup/popup-utils';
-import { saveJobData } from '@/utils/db/saveJobData';
+import { alreadySaved, saveJobData } from '@/utils/db/saveJobData';
 import { useDarkMode } from '@/components/display-settings';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,12 +31,19 @@ function App() {
   }
 
   async function saveJob() {
-    if (!activeTab?.id) return setStatus('No active tab found.');
+    if (!activeTab?.id || !activeTab?.url)
+      return setStatus('No active tab found.');
+
+    const jobSite = getJobSiteName(activeTab.url);
+    if (jobSite === null) return setStatus('Unsupported Job Site');
 
     const jobId = await browser.tabs.sendMessage(activeTab.id, {
       message: 'Handshake-getJobId',
     });
     if (jobId === null) return setStatus('No job ID found.');
+
+    if (await alreadySaved({ jobSite, jobId }))
+      return setStatus('Job Already Saved');
 
     const token = await browser.tabs.sendMessage(activeTab.id, {
       message: 'Handshake-getToken',
