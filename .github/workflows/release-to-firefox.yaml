@@ -1,4 +1,4 @@
-name: Release to Chrome and Firefox Store
+name: Release Firefox Store
 
 on:
   release:
