@@ -1,5 +1,3 @@
-import { getSavedJobs } from '@/utils/db/getSavedJobs';
-import { JobSelectType } from '@/utils/db/schema';
 import { getTrackedJobs } from '@/utils/storage/trackedJobs';
 
 export default defineBackground(() => {
@@ -46,13 +44,8 @@ export default defineBackground(() => {
       (async () => {
         try {
           const trackedJobs = await getTrackedJobs();
-          console.log(trackedJobs)
           const storedId = `handshake-${String(message.jobId)}`;
           const tracked = trackedJobs.includes(storedId);
-          console.log('[JobSourcerer] check_job_exists:', {
-            storedId,
-            tracked,
-          });
           sendResponse({ tracked });
         } catch (err) {
           console.error('check_job_exists failed:', err);

@@ -8,12 +8,11 @@ import {
   jobTable,
 } from '@/utils/db/schema';
 import { ColumnDef } from '@tanstack/react-table';
-import { Button } from '../ui/button';
 import { JobModal } from '../job-modal';
 import { Pencil } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { db } from '@/utils/db/db';
-import { eq, inArray } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { useQueryClient } from '@tanstack/react-query';
 import { ResumeMatchesModal } from './resume-matches-modal';
 import { CommentsDrawer } from './comments-drawer';
