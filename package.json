@@ -2,7 +2,7 @@
   "name": "job-sourcerer",
   "description": "A centralized job application platform.",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "scripts": {
     "build": "pnpm gendb && wxt build",
