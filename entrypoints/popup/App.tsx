@@ -37,36 +37,40 @@ function App() {
     const jobSite = getJobSiteName(activeTab.url);
     if (jobSite === null) return setStatus('Unsupported Job Site');
 
-    const jobId = await browser.tabs.sendMessage(activeTab.id, {
-      message: 'Handshake-getJobId',
-    });
-    if (jobId === null) return setStatus('No job ID found.');
-
-    if (await alreadySaved({ jobSite, jobId }))
-      return setStatus('Job Already Saved');
-
-    const token = await browser.tabs.sendMessage(activeTab.id, {
-      message: 'Handshake-getToken',
-    });
-    if (token === null) return setStatus('Failed to get token.');
-
-    const fetchedJob = await browser.runtime.sendMessage({
-      type: 'Handshake-fetchJobData',
-      data: { jobId, token },
-    });
-    if (!fetchedJob) return setStatus('Fetch failed.');
-
     let jobData = null;
-    try {
-      jobData = parseFetchedJob(fetchedJob);
-    } catch (e) {
-      if (!(e instanceof Error)) return setStatus(`Job Parsing Error`);
-      console.error(e?.stack ?? e.message);
-      return setStatus(`Job Parsing Error:<${e.message}>`);
-    } finally {
-      if (jobData === null) return;
+
+    if (jobSite === 'handshake') {
+      const jobId = await browser.tabs.sendMessage(activeTab.id, {
+        message: 'Handshake-getJobId',
+      });
+      if (jobId === null) return setStatus('No job ID found.');
+
+      if (await alreadySaved({ jobSite, jobId }))
+        return setStatus('Job Already Saved');
+
+      const token = await browser.tabs.sendMessage(activeTab.id, {
+        message: 'Handshake-getToken',
+      });
+      if (token === null) return setStatus('Failed to get token.');
+
+      const fetchedJob = await browser.runtime.sendMessage({
+        type: 'Handshake-fetchJobData',
+        data: { jobId, token },
+      });
+      if (!fetchedJob) return setStatus('Fetch failed.');
+
+      try {
+        jobData = parseFetchedJob(fetchedJob);
+      } catch (e) {
+        if (!(e instanceof Error)) return setStatus(`Job Parsing Error`);
+        console.error(e?.stack ?? e.message);
+        return setStatus(`Job Parsing Error:<${e.message}>`);
+      }
+    } else if (jobSite === 'linkedin') {
+      setStatus('linkedin');
     }
 
+    if (jobData === null) return;
     const saveOk = await saveJobData(jobData);
     setStatus(!saveOk ? 'Failed to save job.' : 'Job Saved');
 
