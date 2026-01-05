@@ -36,7 +36,7 @@ export function parseLinkedinJob(
     }
   }
   const description =
-    body.getElementsByClassName('jobs-description__content')[0].textContent ??
+    body.getElementsByClassName('jobs-description__content')[0].outerHTML ??
     'N/A';
   const companyName =
     body
