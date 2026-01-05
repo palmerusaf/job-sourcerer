@@ -1,27 +1,29 @@
 import { insertTrackedIcon } from '@/utils/insertTrackedIcon';
 import { observeUrlChanges } from '@/utils/observeUrlChanges';
-import { getHandshakeJobId } from '@/utils/popup/popup-utils';
+import { getLinkedInJobId, parseLinkedinJob } from '@/utils/popup/popup-utils';
 
 // Finds and returns the selected job posting url in users active (https://asu.joinhandshake.com/stu/postings) window.
+export const getLinkedJobDataMsg = 'da12a831-e7c9-410c-bb2f-b64e634662cf';
 export default defineContentScript({
-  matches: ['*://*.joinhandshake.com/*'],
+  allFrames: false,
+  matches: ['*://*.linkedin.com/*'],
   main() {
+    document;
     browser.runtime.onMessage.addListener(
       function(request, sender, sendResponse) {
-        if (request.message === 'Handshake-getJobId') {
-          sendResponse(getHandshakeJobId(location.href));
-        }
-        if (request.message === 'Handshake-getToken') {
-          const token = document
-            .querySelector('meta[name="csrf-token"]')
-            ?.getAttribute('content');
-          sendResponse(token);
+        if (request.message === getLinkedJobDataMsg) {
+          const jobData = parseLinkedinJob(
+            document,
+            getLinkedInJobId(window.location.href) ?? ''
+          );
+          debugger;
+          sendResponse(jobData);
         }
       }
     );
 
     observeUrlChanges(async () => {
-      const jobId = getHandshakeJobId(location.href);
+      const jobId = getLinkedInJobId(location.href);
       if (!jobId) return;
 
       console.log('Found job ID:', jobId);
@@ -29,7 +31,7 @@ export default defineContentScript({
       const res = await browser.runtime.sendMessage({
         type: 'check_job_exists',
         jobId,
-        site: 'handshake',
+        site: 'linkedin',
       });
 
       if (res?.tracked) {

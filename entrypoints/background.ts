@@ -44,7 +44,7 @@ export default defineBackground(() => {
       (async () => {
         try {
           const trackedJobs = await getTrackedJobs();
-          const storedId = `handshake-${String(message.jobId)}`;
+          const storedId = `${message.site}-${String(message.jobId)}`;
           const tracked = trackedJobs.includes(storedId);
           sendResponse({ tracked });
         } catch (err) {

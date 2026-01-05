@@ -1,25 +1,54 @@
-import { getJobId, parseFetchedJob } from './popup-utils.ts';
+import { onsiteData, remoteData } from './handshake-test-data.ts';
+import { JSDOM } from 'jsdom';
+import {
+  getHandshakeJobId,
+  getJobSiteName,
+  parseHandshakeJob,
+  parseLinkedinJob,
+} from './popup-utils.ts';
 import { describe, expect, test } from 'vitest';
+import { linkedinTestHtmlString } from './linkedin-dom.ts';
 
-describe('getJobId Tests', () => {
+describe('getJobSiteName Tests', () => {
+  test('handshake', () => {
+    expect(
+      getJobSiteName(
+        'https://app.joinhandshake.com/job-search/10119675?page=1&per_page=25'
+      )
+    ).toBe('handshake');
+  });
+  test('linkedin', () => {
+    expect(
+      getJobSiteName(
+        'https://www.linkedin.com/jobs/view/4325252246/?alternateChannel=search&eBP=CwEAAAGbdWOV8yO2WrYcm3q7ZQuLOmNTcJfACh64cmZYzf8VzvP0zjKfgPw-o7fJDoBmFibZrcP36UFxSCHrJMqp4XlytR3vZP-OSff47KczgUoKQa5jyYsfgr0tkIi3OIjdm-_g1azGpvvohNqgitHPkNVpKjB2LlOg4CklEed__rNwv2F49AAe1ijXl3Nv06FQ90hKUcMyBvGT57AyLUMV-M8jNvRqrQfL6KWY4bC5FXvLuyH_MbPdzmJiyInusjpuXuQKEzDx52LODlEHniRRPi8PZNhalBPxaMk1VYy_X-_Y8fJ6lbNTV85akmFFFC5jJdVh0ssJSV4YTz4FlqBTFYz5ofuY2ootxRNh9xFy_reMRImGZeIUdjpbGM7v_BWJJXBuvEZ9r9lJ1ZW5a2hMFTNp1Z2fGjUYQcRSj80F5tcWoeaQDaGiISWFKjmKInm3pXF9dslyNa_JlrsXwSLcNR8GdJLoWj_cy3-7R7L0OLniYXGjCuQBkf9jRqqxIE8&trk=d_flagship3_preload&refId=NmBoMI46s%2FOnckjXa242Ag%3D%3D&trackingId=VX0B128wC8nmdNbUjmr0qg%3D%3D'
+      )
+    ).toBe('linkedin');
+  });
+
+  test('null', () => {
+    expect(getJobSiteName('https://google.com/')).toBeNull();
+  });
+});
+
+describe('getHandshakeJobId Tests', () => {
   test('returns null when job id not in url', () => {
     expect(
-      getJobId('https://app.joinhandshake.com/inbox?filter=all')
+      getHandshakeJobId('https://app.joinhandshake.com/inbox?filter=all')
     ).toBeNull();
   });
   test('returns job id when job id in url', () => {
     expect(
-      getJobId(
+      getHandshakeJobId(
         'https://app.joinhandshake.com/job-search/10119675?page=1&per_page=25'
       )
     ).toBe(10119675);
     expect(
-      getJobId(
+      getHandshakeJobId(
         'https://app.joinhandshake.com/job-search/9966672?page=1&per_page=25'
       )
     ).toBe(9966672);
     expect(
-      getJobId(
+      getHandshakeJobId(
         'https://app.joinhandshake.com/jobs/10119675?searchId=f5b81e40-03c4-4062-940d-ff23ea45e145'
       )
     ).toBe(10119675);
@@ -27,95 +56,20 @@ describe('getJobId Tests', () => {
   test("returns null when a number other than a job id is in url aka doesn't return false positives", () => {
     // https://app.joinhandshake.com/stu/events/1428880
     expect(
-      getJobId('https://app.joinhandshake.com/stu/events/1428880')
+      getHandshakeJobId('https://app.joinhandshake.com/stu/events/1428880')
     ).toBeNull();
     expect(
-      getJobId(
+      getHandshakeJobId(
         'https://app.joinhandshake.com/stu/career_fairs/60565/jobs?page=1&per_page=12'
       )
     ).toBeNull();
   });
 });
 
-export const remoteData = {
-  id: '10119675',
-  title: 'Salesforce Developer',
-  description:
-    '<p>Salesforce Developer</p><p>More details&nbsp;</p><p>https://jobs.gusto.com/postings/cinnovx-salesforce-developer-6e4c6c31-3872-4569-ad7c-fe4acb919e8c</p>',
-  createdAt: '2025-08-07T02:48:31+07:00',
-  expirationDate: '2026-02-06T21:00:00+07:00',
-  employer: {
-    id: '1035748',
-    name: 'Cinnovx',
-    logo: null,
-  },
-  locations: [],
-  salaryRange: {
-    min: 8500000,
-    max: 9500000,
-    currency: 'USD',
-    paySchedule: {
-      name: 'Annual Salary',
-    },
-  },
-  jobType: {
-    id: '9',
-    name: 'Job',
-  },
-  employmentType: {
-    id: '1',
-    name: 'Full-Time',
-  },
-  workStudy: false,
-  remote: true,
-};
-export const onsiteData = {
-  id: '10153029',
-  title: 'Software Test Engineer',
-  description: "Short description cause ain't nobody got time for dat",
-  createdAt: '2025-08-16T06:29:30+07:00',
-  expirationDate: '2026-02-15T21:00:00+07:00',
-  employer: {
-    id: '1030152',
-    name: 'Oros Gaming',
-    logo: {
-      url: 'https://s3.amazonaws.com/handshake.production/app/public/assets/institutions/1030152/original/hs-emp-logo-OrosLogoOnBlack.png?1744812764',
-    },
-  },
-  locations: [
-    {
-      id: '157894196',
-      name: 'Reno, Nevada, United States of America',
-      city: 'Reno',
-      state: 'Nevada',
-      country: 'United States',
-      latitude: 39.526121,
-      longitude: -119.812658,
-    },
-  ],
-  salaryRange: {
-    min: 4600000,
-    max: 6900000,
-    currency: 'USD',
-    paySchedule: {
-      name: 'Annual Salary',
-    },
-  },
-  jobType: {
-    id: '9',
-    name: 'Job',
-  },
-  employmentType: {
-    id: '1',
-    name: 'Full-Time',
-  },
-  workStudy: false,
-  remote: false,
-};
 describe('parse handshake fetch', () => {
   test('parses data', () => {
     [remoteData, onsiteData].forEach((el) => {
-      const pd = parseFetchedJob(el);
+      const pd = parseHandshakeJob(el);
       expect(pd).not.toBeNull();
       if (pd === null) return;
 
@@ -140,9 +94,37 @@ describe('parse handshake fetch', () => {
   });
 
   test('invalid data throws error', () => {
-    expect(() => parseFetchedJob({})).toThrowError();
-    expect(() => parseFetchedJob('')).toThrowError();
-    expect(() => parseFetchedJob(1)).toThrowError();
-    expect(() => parseFetchedJob(1.4)).toThrowError();
+    expect(() => parseHandshakeJob({})).toThrowError();
+    expect(() => parseHandshakeJob('')).toThrowError();
+    expect(() => parseHandshakeJob(1)).toThrowError();
+    expect(() => parseHandshakeJob(1.4)).toThrowError();
+  });
+});
+
+describe('parse linkedin jobs', () => {
+  test('test 1', () => {
+    const dom = new JSDOM(linkedinTestHtmlString);
+    const doc = dom.window.document;
+    const jobData = parseLinkedinJob(doc, '4348896576');
+
+    expect(jobData?.closeOutDate).toBe(undefined);
+    expect(jobData.companyLogoUrl).toBe(
+      'https://media.licdn.com/dms/image/v2/C560BAQHDGjY1IZJuog/company-logo_100_100/company-logo_100_100/0/1631309406468?e=1769040000&v=beta&t=hDdKIPPgcU_oUP7zsPDj09K_ifvAx4XnYiu3Pefdg2I'
+    );
+    expect(jobData.companyName.includes('Varsity Tutors, a Nerdy Company'))
+      .true;
+    expect(jobData?.datePosted).toBe(undefined);
+    expect(
+      jobData.description.includes(
+        'The Varsity Tutors Live Learning Platform has thousands of students looking for remote online AP Computer Science A tutors. As a tutor on the Varsity Tutors Platform, you’ll have the flexibility to set your own schedule, earn competitive rates, and make a real impact on students’ learning journeys—all from the comfort of your home.'
+      )
+    ).true;
+    expect(jobData.employmentType).toBe('Full-Time');
+    expect(jobData.intern).false;
+    expect(jobData.jobIdFromSite).toBe('linkedin-4348896576');
+    expect(jobData.link).toBe('https://www.linkedin.com/jobs/view/4348896576');
+    expect(jobData.location.includes('Michigan, United States')).true;
+    expect(jobData.remote).true;
+    expect(jobData.title.includes('AP Computer Science A Tutor')).true;
   });
 });

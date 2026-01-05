@@ -198,7 +198,7 @@ Once you have used the application you can view stats for jobs and resumes. Thes
   - [x] Add Handshake job to dashboard through popup
   - [x] Display job tracked indicator overlaid in job site
   - [ ] Search/Add jobs from app dashboard
-  - [ ] Integrate with LinkedIn
+  - [x] Integrate with LinkedIn
 
 See the [open issues](https://github.com/palmerusaf/job-sourcerer/issues) for a full list of proposed features (and known issues).
 
