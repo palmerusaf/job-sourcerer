@@ -1,6 +1,6 @@
 import { insertTrackedIcon } from '@/utils/insertTrackedIcon';
 import { observeUrlChanges } from '@/utils/observeUrlChanges';
-import { getLinkedInJobId } from '@/utils/popup/popup-utils';
+import { getLinkedInJobId, parseLinkedinJob } from '@/utils/popup/popup-utils';
 
 // Finds and returns the selected job posting url in users active (https://asu.joinhandshake.com/stu/postings) window.
 export const getLinkedJobDataMsg = 'da12a831-e7c9-410c-bb2f-b64e634662cf';
@@ -12,8 +12,12 @@ export default defineContentScript({
     browser.runtime.onMessage.addListener(
       function(request, sender, sendResponse) {
         if (request.message === getLinkedJobDataMsg) {
-          console.log(document);
-          sendResponse(document);
+          sendResponse(
+            parseLinkedinJob(
+              document,
+              getLinkedInJobId(window.location.href) ?? ''
+            )
+          );
         }
       }
     );

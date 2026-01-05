@@ -80,7 +80,7 @@ function App() {
       if (await alreadySaved({ jobSite, jobId }))
         return setStatus('Job Already Saved');
 
-      const jobData = await browser.tabs.sendMessage(activeTab.id, {
+      jobData = await browser.tabs.sendMessage(activeTab.id, {
         message: getLinkedJobDataMsg,
       });
     }
