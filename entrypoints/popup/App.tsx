@@ -5,12 +5,13 @@ import { PublicPath } from 'wxt/browser';
 import {
   getJobSiteName,
   getLinkedInJobId,
-  parseFetchedJob,
+  parseHandshakeJob,
 } from '@/utils/popup/popup-utils';
 import { alreadySaved, saveJobData } from '@/utils/db/saveJobData';
 import { useDarkMode } from '@/components/display-settings';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { getLinkedJobDataMsg } from '../linkedin.content';
 
 function App() {
   const [status, setStatus] = useState('');
@@ -64,7 +65,7 @@ function App() {
       if (!fetchedJob) return setStatus('Fetch failed.');
 
       try {
-        jobData = parseFetchedJob(fetchedJob);
+        jobData = parseHandshakeJob(fetchedJob);
       } catch (e) {
         if (!(e instanceof Error)) return setStatus(`Job Parsing Error`);
         console.error(e?.stack ?? e.message);
@@ -78,6 +79,10 @@ function App() {
 
       if (await alreadySaved({ jobSite, jobId }))
         return setStatus('Job Already Saved');
+
+      const jobData = await browser.tabs.sendMessage(activeTab.id, {
+        message: getLinkedJobDataMsg,
+      });
     }
 
     if (jobData === null) return;

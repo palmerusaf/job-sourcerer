@@ -3,13 +3,16 @@ import { observeUrlChanges } from '@/utils/observeUrlChanges';
 import { getLinkedInJobId } from '@/utils/popup/popup-utils';
 
 // Finds and returns the selected job posting url in users active (https://asu.joinhandshake.com/stu/postings) window.
+export const getLinkedJobDataMsg = 'da12a831-e7c9-410c-bb2f-b64e634662cf';
 export default defineContentScript({
   allFrames: false,
   matches: ['*://*.linkedin.com/*'],
   main() {
+    document;
     browser.runtime.onMessage.addListener(
       function(request, sender, sendResponse) {
-        if (request.message === 'Linkedin-getDom') {
+        if (request.message === getLinkedJobDataMsg) {
+          console.log(document);
           sendResponse(document);
         }
       }
