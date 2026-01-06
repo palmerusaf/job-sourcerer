@@ -25,8 +25,8 @@ function App() {
       })
       .then(([t]) => setActiveTab(t));
   }, []);
-  const isSupportedSite =
-    activeTab?.url !== undefined && getJobSiteName(activeTab.url) !== null;
+  // disable because activeTab?.url is buggy on firefox
+  const isSupportedSite = true;
 
   async function openSPA() {
     await browser.tabs.create({
@@ -71,9 +71,7 @@ function App() {
         console.error(e?.stack ?? e.message);
         return setStatus(`Job Parsing Error:<${e.message}>`);
       }
-    }
-
-    if (jobSite === 'linkedin') {
+    } else {
       const jobId = getLinkedInJobId(activeTab.url);
       if (jobId === null) return setStatus('No job ID found.');
 
