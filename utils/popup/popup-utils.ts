@@ -6,10 +6,6 @@ import {
   jobTable,
 } from '../db/schema';
 
-export function getLinkedInJobId(url: string) {
-  return new URL(url).searchParams.get('currentJobId') as string | null;
-}
-
 export function getHandshakeJobId(url: string): number | null {
   const segments = new URL(url).pathname.split('/').filter(Boolean);
   if (

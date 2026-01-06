@@ -8,6 +8,11 @@ export default defineContentScript({
   main() {
     browser.runtime.onMessage.addListener(
       function(request, sender, sendResponse) {
+        if (request.message === 'get-job-site') {
+          if (location.hostname.includes('joinhandshake.com'))
+            sendResponse('handshake');
+          return sendResponse(null);
+        }
         if (request.message === 'Handshake-getJobId') {
           sendResponse(getHandshakeJobId(location.href));
         }

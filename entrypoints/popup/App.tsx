@@ -2,16 +2,13 @@ import '@/assets/tailwind.css';
 import { useState, useEffect } from 'react';
 import logo from '/wxt.svg';
 import { PublicPath } from 'wxt/browser';
-import {
-  getJobSiteName,
-  getLinkedInJobId,
-  parseHandshakeJob,
-} from '@/utils/popup/popup-utils';
+import { parseHandshakeJob } from '@/utils/popup/popup-utils';
 import { alreadySaved, saveJobData } from '@/utils/db/saveJobData';
 import { useDarkMode } from '@/components/display-settings';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getLinkedJobDataMsg } from '../linkedin.content';
+import { JobSiteNameType } from '@/utils/db/schema';
 
 function App() {
   const [status, setStatus] = useState('');
@@ -25,8 +22,18 @@ function App() {
       })
       .then(([t]) => setActiveTab(t));
   }, []);
-  // disable because activeTab?.url is buggy on firefox
-  const isSupportedSite = true;
+
+  const [jobSite, setJobSite] = useState<JobSiteNameType | null>(null);
+  useEffect(() => {
+    (async () => {
+      if (!activeTab?.id) return;
+      const site = await browser.tabs.sendMessage(activeTab.id, {
+        message: 'get-job-site',
+      });
+      setJobSite(site);
+    })();
+  }, [activeTab]);
+  const isSupportedSite = jobSite !== null;
 
   async function openSPA() {
     await browser.tabs.create({
@@ -36,10 +43,8 @@ function App() {
   }
 
   async function saveJob() {
-    if (!activeTab?.id || !activeTab?.url)
-      return setStatus('No active tab found.');
+    if (!activeTab?.id) return setStatus('No active tab found.');
 
-    const jobSite = getJobSiteName(activeTab.url);
     if (jobSite === null) return setStatus('Unsupported Job Site');
 
     let jobData = null;
@@ -71,8 +76,11 @@ function App() {
         console.error(e?.stack ?? e.message);
         return setStatus(`Job Parsing Error:<${e.message}>`);
       }
-    } else {
-      const jobId = getLinkedInJobId(activeTab.url);
+    } else if (jobSite === 'linkedin') {
+      debugger;
+      const jobId = await browser.tabs.sendMessage(activeTab.id, {
+        message: 'getLinkedJobId',
+      });
       if (jobId === null) return setStatus('No job ID found.');
 
       if (await alreadySaved({ jobSite, jobId }))
@@ -119,6 +127,14 @@ function App() {
       </Button>
     </Card>
   );
+}
+
+async function getJobSite(tabId: number) {
+  try {
+    return await browser.tabs.sendMessage(tabId, 'get-job-site');
+  } catch {
+    return null;
+  }
 }
 
 export default App;
