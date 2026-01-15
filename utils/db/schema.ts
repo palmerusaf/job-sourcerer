@@ -5,7 +5,6 @@ import {
   pgTable,
   text,
   timestamp,
-  unique,
 } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
 import { relations } from 'drizzle-orm';
@@ -15,7 +14,6 @@ export const jobSiteNames = ['linkedin', 'handshake'] as const;
 export type JobSiteNameType = (typeof jobSiteNames)[number];
 
 export const jobStatus = [
-  'search result',
   'recently added',
   'interested',
   'applied',
@@ -29,7 +27,6 @@ export const jobStatus = [
 export type JobStatusType = (typeof jobStatus)[number];
 
 export const statusColors: Record<JobStatusType, string> = {
-  'search result': '#94a3b8',
   'recently added': '#60a5fa',
   interested: '#fbbf24',
   applied: '#a78bfa',
@@ -40,14 +37,13 @@ export const statusColors: Record<JobStatusType, string> = {
   'recieved offer': '#10b981',
 };
 
-export const jobStatusEmojis = {
+export const jobStatusEmojis: Record<JobStatusType, string> = {
   applied: '📨', // sent application
   ghosted: '👻', // no reply
   interested: '⭐', // marked as interested
   'not interested': '👎', // declined / passed
   rejected: '❌', // got rejected
   'scheduled interview': '📅', // upcoming interview
-  'search result': '🔍', // found in search
   'recently added': '🆕', // new job entry
   'recieved offer': '🤝',
 } as const;

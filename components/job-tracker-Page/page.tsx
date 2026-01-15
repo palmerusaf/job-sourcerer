@@ -7,6 +7,7 @@ import {
   JobSelectType,
   jobStatus,
   jobStatusEmojis,
+  JobStatusType,
   jobTable,
 } from '@/utils/db/schema';
 import { db } from '@/utils/db/db';
@@ -15,6 +16,7 @@ import { DataTable } from './data-table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '../ui/button';
 import { getSavedJobs } from '@/utils/db/getSavedJobs';
+import { Input } from '../ui/input';
 
 export function JobTrackerPage() {
   const { data } = useQuery<JobSelectType[]>({
@@ -27,12 +29,22 @@ export function JobTrackerPage() {
   >('all');
   const [selRowState, setSelRowState] = useState({});
   const [selRowData, setSelRowData] = useState<JobSelectType[]>([]);
-
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    if (tabValue === 'all') return data;
-    return data.filter((el) => el.status === tabValue);
-  }, [data, tabValue]);
+  const [companySearchParam, setCompanySearchParam] = useState('');
+  const [filteredData, setFilteredData] = useState(data ?? []);
+  useEffect(() => {
+    setFilteredData(() => {
+      if (!data) return [];
+      const tabValFilterCB = ({ status }: { status: JobStatusType }): boolean =>
+        tabValue === 'all' || status === tabValue;
+      return data
+        .filter(tabValFilterCB)
+        .filter(
+          ({ companyName }) =>
+            !companySearchParam.length ||
+            companyName.toLowerCase().includes(companySearchParam.toLowerCase())
+        );
+    });
+  }, [data, tabValue, companySearchParam]);
 
   const table = useReactTable({
     data: filteredData,
@@ -55,14 +67,21 @@ export function JobTrackerPage() {
     setSelRowState({});
   }, [data]);
 
-  if (!data) return;
-  <div className='flex items-center justify-center h-full'>
-    <div className='text-xl text-slate-500 animate-pulse'>Loading...</div>
-  </div>;
+  if (!data)
+    return (
+      <div className='flex items-center justify-center h-full'>
+        <div className='text-xl text-slate-500 animate-pulse'>Loading...</div>
+      </div>
+    );
 
   return (
     <div className='grid gap-2 content-center pb-12 px-12'>
       <StatusTabs />
+      <Input
+        className='w-md mx-auto'
+        onChange={({ target: { value } }) => setCompanySearchParam(() => value)}
+        placeholder='🔍︎ Filter by company name.'
+      />
       <MultiSelectMenu rows={selRowData} />
       <DataTable table={table} />
     </div>
