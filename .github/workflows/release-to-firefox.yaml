@@ -25,12 +25,11 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Zip extensions
+      - name: Zip Extensions
         run: |
-          pnpm zip
           pnpm zip:firefox
 
-      - name: Submit to firefox store
+      - name: Submit to Firefox Store
         run: |
           pnpm wxt submit \
             --firefox-zip .output/*-firefox.zip --firefox-sources-zip .output/*-sources.zip
