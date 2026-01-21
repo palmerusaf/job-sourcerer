@@ -9,6 +9,7 @@ import {
 import { describe, expect, test } from 'vitest';
 import { linkedinTestHtmlString as linkedinTest1Data } from './linkedin-test1-data.ts';
 import { data as linkedinYearTestData } from './linkedin-test2-data.ts';
+import { data as linkedinSinglePayData } from './linkedin-test3-data.ts';
 
 describe('getJobSiteName Tests', () => {
   test('handshake', () => {
@@ -133,7 +134,13 @@ describe('parse linkedin jobs', () => {
   test('year pay rate test', () => {
     const dom = new JSDOM(linkedinYearTestData);
     const doc = dom.window.document;
-    const jobData = parseLinkedinJob(doc, '4348896576');
+    const jobData = parseLinkedinJob(doc, '0');
     expect(jobData.payrate).toBe(150_000);
+  });
+  test('single pay rate', () => {
+    const dom = new JSDOM(linkedinSinglePayData);
+    const doc = dom.window.document;
+    const jobData = parseLinkedinJob(doc, '0');
+    expect(jobData.payrate).toBe(15);
   });
 });
