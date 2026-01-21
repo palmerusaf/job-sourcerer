@@ -1,6 +1,7 @@
 import {
   employmentTypeList,
   JobInsertType,
+  JobSelectType,
   jobSiteNames,
   JobSiteNameType,
   jobTable,
@@ -43,6 +44,31 @@ export function parseLinkedinJob(
   const [buttons] = body.getElementsByClassName(
     'job-details-fit-level-preferences'
   );
+  const payText = buttons.childNodes
+    .values()
+    .find((el) => el.textContent?.includes('$'))?.textContent;
+  let payType: JobInsertType['payType'] = null;
+  let payrate: JobInsertType['payrate'] = null;
+  if (payText) {
+    const payTypeMap: { [key: string]: JobSelectType['payType'] } = {
+      hr: 'Hourly Wage',
+      yr: 'Annual Salary',
+      mo: 'Monthly Stipend',
+    };
+    for (const key in payTypeMap) {
+      if (payText.includes(key)) {
+        payType = payTypeMap[key];
+        break;
+      }
+    }
+    const payRange = payText
+      .split(' - ')
+      .filter((el) => el.includes('$'))
+      .map((el) => el.replaceAll(/[^\d]/g, ''))
+      .map((el) => parseInt(el));
+    const [low, high] = payRange;
+    payrate = (low + high) / 2;
+  }
   const remote = buttons.textContent?.toLowerCase().includes('remote') ?? false;
   const intern = buttons.textContent?.toLowerCase().includes('intern') ?? false;
   const link = `https://www.linkedin.com/jobs/view/${jobId}`;
@@ -64,6 +90,8 @@ export function parseLinkedinJob(
   }
   return {
     jobIdFromSite: `linkedin-${jobId}`,
+    payType,
+    payrate,
     employmentType,
     description,
     companyName,

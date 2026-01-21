@@ -124,6 +124,8 @@ describe('parse linkedin jobs', () => {
     expect(jobData.jobIdFromSite).toBe('linkedin-4348896576');
     expect(jobData.link).toBe('https://www.linkedin.com/jobs/view/4348896576');
     expect(jobData.location.includes('Michigan, United States')).true;
+    expect(jobData.payType).toBe('Hourly Wage');
+    expect(jobData.payrate).toBe(29);
     expect(jobData.remote).true;
     expect(jobData.title.includes('AP Computer Science A Tutor')).true;
   });
