@@ -52,7 +52,7 @@ export const columns: ColumnDef<JobSelectType>[] = [
       },
     }) => {
       const imgUrl = !companyLogoUrl?.length ? logo : companyLogoUrl;
-      return <img className='ml-2 w-7 h-7' src={imgUrl} alt={imgUrl} />;
+      return <img className='ml-2 w-7 h-7' src={imgUrl} />;
     },
   },
   {

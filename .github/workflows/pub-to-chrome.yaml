@@ -1,4 +1,4 @@
-name: Release to Chrome Store
+name: Publish to Chrome Store
 
 on:
   release:
