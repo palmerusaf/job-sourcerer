@@ -1,4 +1,4 @@
-name: Release Firefox Store
+name: Publish Firefox Store
 
 on:
   release:
