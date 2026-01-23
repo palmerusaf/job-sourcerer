@@ -70,6 +70,8 @@ export function parseLinkedinJob(
       .map((el) => parseInt(el));
     const [low, high] = payRange;
     payrate = high ? (low + high) / 2 : low;
+    payrate *= 100;
+    payrate = Math.round(payrate);
   }
   const remote = buttons.textContent?.toLowerCase().includes('remote') ?? false;
   const intern = buttons.textContent?.toLowerCase().includes('intern') ?? false;
