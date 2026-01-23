@@ -1,17 +1,15 @@
 import logo from '/wxt.svg';
 import { JobSelectType, jobStatusEmojis, jobTable } from '@/utils/db/schema';
 import { ColumnDef } from '@tanstack/react-table';
-import { Button } from '../ui/button';
 import { JobModal } from '../job-modal';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { db } from '@/utils/db/db';
-import { eq, inArray } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { useQueryClient } from '@tanstack/react-query';
 import { CommentsDrawer } from './comments-drawer';
 import { Checkbox } from '../ui/checkbox';
 import { DeleteButton } from '../job-tracker-Page/columns';
 import { AsyncButton } from '../async-button';
-import { removeTrackedJob } from '@/utils/storage/trackedJobs';
 
 export const columns: ColumnDef<JobSelectType>[] = [
   {
@@ -45,7 +43,7 @@ export const columns: ColumnDef<JobSelectType>[] = [
       },
     }) => {
       const imgUrl = !companyLogoUrl?.length ? logo : companyLogoUrl;
-      return <img className='ml-2 w-7 h-7' src={imgUrl} alt={imgUrl} />;
+      return <img className='ml-2 w-7 h-7' src={imgUrl} />;
     },
   },
   {
