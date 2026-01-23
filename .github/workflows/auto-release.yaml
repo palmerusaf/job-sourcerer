@@ -8,8 +8,6 @@ jobs:
   build:
     name: Release
     runs-on: ubuntu-latest
-    outputs:
-      released: ${{ steps.release.outputs.released }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
