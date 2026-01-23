@@ -61,17 +61,7 @@ export function parseLinkedinJob(
         break;
       }
     }
-    const payRange = payText
-      .split(' - ')
-      .filter((el) => el.includes('$'))
-      .map((el) => el.toUpperCase())
-      .map((el) => el.replaceAll('K', '000'))
-      .map((el) => el.replaceAll(/[^\d]/g, ''))
-      .map((el) => parseInt(el));
-    const [low, high] = payRange;
-    payrate = high ? (low + high) / 2 : low;
-    payrate *= 100;
-    payrate = Math.round(payrate);
+    payrate = linkedInPayParser(payText);
   }
   const remote = buttons.textContent?.toLowerCase().includes('remote') ?? false;
   const intern = buttons.textContent?.toLowerCase().includes('intern') ?? false;
@@ -109,6 +99,22 @@ export function parseLinkedinJob(
     intern,
   };
 }
+
+export function linkedInPayParser(payText: string): number {
+  const payRange = payText
+    .split(' - ')
+    .filter((el) => el.includes('$'))
+    .map((el) => el.toUpperCase())
+    .map((el) => el.replaceAll(/[^\d.]/g, ''))
+    .map((el) => parseFloat(el));
+  const [low, high] = payRange;
+  let payrate = high ? (low + high) / 2 : low;
+  payrate *= 100;
+  payrate = Math.round(payrate);
+  if (payText.toUpperCase().includes('K')) payrate *= 1000;
+  return payrate;
+}
+
 /** @throws WARN: Error if parsing fails because of missing members in fetched data. */
 export function parseHandshakeJob(data: unknown): JobInsertType {
   const d = data as any; // Narrow down for now

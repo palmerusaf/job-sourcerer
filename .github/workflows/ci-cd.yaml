@@ -1,13 +1,9 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches:
-      - main # Runs CI/CD when code is pushed to 'main'
   pull_request:
     branches:
-      - main # Runs CI/CD when code is pulled into 'main'
-  workflow_dispatch: # Manual Trigger for CI/CD (testing purposes)
+      - main
 
 jobs:
   build:

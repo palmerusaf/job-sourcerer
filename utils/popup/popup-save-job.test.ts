@@ -3,6 +3,7 @@ import { JSDOM } from 'jsdom';
 import {
   getHandshakeJobId,
   getJobSiteName,
+  linkedInPayParser,
   parseHandshakeJob,
   parseLinkedinJob,
 } from './popup-utils.ts';
@@ -137,13 +138,13 @@ describe('parse linkedin jobs', () => {
     const dom = new JSDOM(linkedinYearTestData);
     const doc = dom.window.document;
     const jobData = parseLinkedinJob(doc, '0');
-    expect(jobData.payrate).toBe(15000000);
+    expect(jobData.payrate).toBe(150_000_00);
   });
   test('single pay rate', () => {
     const dom = new JSDOM(linkedinSinglePayData);
     const doc = dom.window.document;
     const jobData = parseLinkedinJob(doc, '0');
-    expect(jobData.payrate).toBe(1500);
+    expect(jobData.payrate).toBe(15_00);
   });
   test('no pay rate', () => {
     const dom = new JSDOM(linkedinNoPayRate);
@@ -155,6 +156,13 @@ describe('parse linkedin jobs', () => {
     const dom = new JSDOM(linkedinData5);
     const doc = dom.window.document;
     const jobData = parseLinkedinJob(doc, '0');
-    expect(jobData.payrate).toBe(6250);
+    expect(jobData.payrate).toBe(62_50);
+  });
+  test('payParser tests', () => {
+    expect(linkedInPayParser('$18/hr - $40/hr')).toBe(29_00);
+    expect(linkedInPayParser('$95.2K/yr - $130.9K/yr')).toBe(113_050_00);
+    expect(linkedInPayParser('$95.2/yr - $130.9K/yr')).toBe(113_050_00);
+    expect(linkedInPayParser('$130.9K/yr')).toBe(130_900_00);
+    expect(linkedInPayParser('$130.9/yr')).toBe(130_90);
   });
 });
