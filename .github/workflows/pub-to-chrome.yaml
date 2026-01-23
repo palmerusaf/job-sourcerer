@@ -3,6 +3,9 @@ name: Publish to Chrome Store
 on:
   release:
 
+permissions:
+  contents: read
+
 jobs:
   submit:
     runs-on: ubuntu-latest

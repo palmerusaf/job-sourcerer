@@ -3,6 +3,9 @@ name: Publish Firefox Store
 on:
   release:
 
+permissions:
+  contents: read
+
 jobs:
   submit:
     runs-on: ubuntu-latest
