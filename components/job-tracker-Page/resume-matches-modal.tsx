@@ -22,19 +22,19 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
         queryKey: ['savedJobs', { resumeId, description }],
         queryFn: getData,
     });
-    if (isPending) return <Loader2 className='mr-2 h-4 w-4 animate-spin' />;
+    if (isPending) return <Loader2 className='mr-2 w-4 h-4 animate-spin' />;
     const triggerLabel =
         resumeId === null ? (
             <div className="p-3 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 py-1">
                 Link
             </div>
         ) : (
-            <span className='flex gap-2 max-w-14 cursor-pointer'>
+            <span className='flex gap-2 cursor-pointer max-w-14'>
                 <ResumeScore
                     jobText={data?.find((el) => el.jsonId === resumeId)?.rawText ?? ''}
                     resumeText={description}
                 />
-                <Pencil className=' my-auto ' />
+                <Pencil className='my-auto' />
             </span>
         );
 
@@ -53,19 +53,25 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
     );
 
     function List() {
+        const _data = data
+            ?.map((item) => ({
+                score: calculateCosineSimilarity(item.rawText, description),
+                ...item,
+            }))
+            .sort((a, b) => b.score - a.score);
         return (
             <>
                 <div className='grid grid-cols-3 gap-2'>
-                    <span className='font-bold text-xl'>Resume</span>
-                    <span className='font-bold text-xl'>Match Rate</span>
+                    <span className='text-xl font-bold'>Resume</span>
+                    <span className='text-xl font-bold'>Match Rate</span>
                     <span></span>
                 </div>
-                <div className='grid grid-cols-3 gap-2  overflow-y-auto max-h-72'>
-                    {data?.map(({ name, jsonId, rawText }) => {
+                <div className='grid overflow-y-auto grid-cols-3 gap-2 max-h-72'>
+                    {_data?.map(({ name, jsonId, rawText }) => {
                         return (
                             <>
                                 <span className='my-auto'>{name}</span>
-                                <span className='max-w-10 mx-auto'>
+                                <span className='mx-auto max-w-10'>
                                     <ResumeScore jobText={rawText} resumeText={description} />
                                 </span>
                                 {jsonId === resumeId ? (
