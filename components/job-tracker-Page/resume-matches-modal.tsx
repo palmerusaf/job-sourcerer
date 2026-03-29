@@ -53,6 +53,12 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
     );
 
     function List() {
+        const _data = data
+            ?.map((item) => ({
+                score: calculateCosineSimilarity(item.rawText, description),
+                ...item,
+            }))
+            .sort((a, b) => b.score - a.score);
         return (
             <>
                 <div className='grid grid-cols-3 gap-2'>
