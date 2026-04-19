@@ -66,7 +66,7 @@ export const columns: ColumnDef<JobSelectType>[] = [
       const title = row.getValue('title') as string;
 
       return (
-        <div className='w-[16ch] overflow-hidden overflow-ellipsis text-blue-700'>
+        <div className='overflow-hidden text-blue-700 w-[16ch] overflow-ellipsis'>
           <a href={row.original.link} target='_blank' rel='noopener noreferrer'>
             {title}
           </a>
@@ -80,15 +80,21 @@ export const columns: ColumnDef<JobSelectType>[] = [
         original: { location },
       },
     }) => (
-      <div className='w-[16ch] overflow-hidden overflow-ellipsis'>
+      <div className='overflow-hidden w-[16ch] overflow-ellipsis'>
         {location}
       </div>
     ),
     header: 'Location',
   },
   {
-    accessorKey: 'employmentType',
-    header: 'Employment',
+    header: 'Status Date',
+    cell: ({
+      row: {
+        original: { statusChangeDate },
+      },
+    }) => {
+      return new Date(statusChangeDate).toLocaleDateString();
+    },
   },
   {
     accessorKey: 'payrate',
@@ -113,7 +119,7 @@ export const columns: ColumnDef<JobSelectType>[] = [
         label={
           <>
             {jobStatusEmojis[status]}
-            <Pencil className='size-4 my-auto ' />
+            <Pencil className='my-auto size-4' />
           </>
         }
       />
@@ -151,7 +157,7 @@ export function EditStatus({
   return (
     <Popover>
       <PopoverTrigger className='cursor-pointer'>
-        <div className='text-lg gap-2 flex'>{label}</div>
+        <div className='flex gap-2 text-lg'>{label}</div>
       </PopoverTrigger>
       <PopoverContent className='grid gap-4'>
         {jobStatus
@@ -268,7 +274,7 @@ export function ActionMenu({ items }: { items: React.ReactNode[] }) {
           View
         </div>
       </PopoverTrigger>
-      <PopoverContent className='grid gap-4  max-w-fit'>{items}</PopoverContent>
+      <PopoverContent className='grid gap-4 max-w-fit'>{items}</PopoverContent>
     </Popover>
   );
 }
