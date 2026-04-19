@@ -14,6 +14,7 @@ import { useDarkMode } from '@/components/display-settings';
 import { ResumeStatusGraph } from '@/components/ResumeStatusGraph.tsx';
 import { DeleteResumePage } from '@/components/delete-resume-page';
 import { lazy, Suspense } from 'react';
+import { ImportExportData } from '@/components/export-import-data';
 
 // lazy loaded comp that are big
 const CurrentJobsStatsPage = lazy(
@@ -97,6 +98,10 @@ export default function App() {
                 subMenu: 'Display',
                 content: <DisplaySettings />,
               },
+              {
+                subMenu: 'Export/Import Data',
+                content: <ImportExportData />,
+              },
             ],
           },
           ...devMenu,
@@ -116,8 +121,8 @@ function NotImplemented() {
 
 function Loading() {
   return (
-    <div className='flex items-center justify-center h-full'>
-      <div className='text-xl text-slate-500 animate-pulse'>Loading...</div>
+    <div className='flex justify-center items-center h-full'>
+      <div className='text-xl animate-pulse text-slate-500'>Loading...</div>
     </div>
   );
 }
