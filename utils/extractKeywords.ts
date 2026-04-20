@@ -1,7 +1,7 @@
 import Similarity from 'compute-cosine-similarity';
 import idf from '../../job-sourcerer-ats-idf-tf/idf.json' with { type: 'json' };
 
-const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{1,}\b/g;
+const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
 
 function generateFeatures(tokens: string[]): string[] {
   const features: string[] = [];
