@@ -1,5 +1,5 @@
 import Similarity from 'compute-cosine-similarity';
-import idf from '../../job-sourcerer-ats-idf-tf/idf.json' with { type: 'json' };
+import idf from './idf.json' with { type: 'json' };
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
 
