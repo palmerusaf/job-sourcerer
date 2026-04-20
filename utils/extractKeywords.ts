@@ -1,98 +1,48 @@
 import Similarity from 'compute-cosine-similarity';
-import { removeStopwords } from 'stopword';
+import idf from './idf.json' with { type: 'json' };
 
-const importantKeyWords = new Set([
-  'net',
-  'ai',
-  'algorithm',
-  'analytics',
-  'angular',
-  'ansible',
-  'api',
-  'architecture',
-  'aspnet',
-  'automation',
-  'aws',
-  'azure',
-  'c#',
-  'c',
-  'c++',
-  'cd',
-  'ci',
-  'css',
-  'cybersecurity',
-  'data',
-  'distributed',
-  'django',
-  'docker',
-  'express',
-  'fastapi',
-  'flask',
-  'gcp',
-  'git',
-  'go',
-  'graphql',
-  'html',
-  'java',
-  'javascript',
-  'jenkins',
-  'jwt',
-  'kotlin',
-  'kubernetes',
-  'laravel',
-  'learning',
-  'machine',
-  'microservices',
-  'ml',
-  'mongodb',
-  'mysql',
-  'next',
-  'node',
-  'numpy',
-  'nuxt',
-  'oauth',
-  'pandas',
-  'performance',
-  'php',
-  'pipeline',
-  'postgresql',
-  'python',
-  'pytorch',
-  'rails',
-  'react',
-  'redis',
-  'ruby',
-  'rust',
-  'scalability',
-  'serverless',
-  'spring',
-  'sql',
-  'sqlite',
-  'svelte',
-  'swift',
-  'system',
-  'tailwind',
-  'tensorflow',
-  'terraform',
-  'testing',
-  'typescript',
-  'ui',
-  'ux',
-  'vue',
-]);
+const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
+
+function generateFeatures(tokens: string[]): string[] {
+  const features: string[] = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    const a = tokens[i];
+    const b = tokens[i + 1];
+
+    // unigram
+    features.push(a);
+
+    // bigram
+    if (b) {
+      features.push(`${a} ${b}`);
+    }
+  }
+
+  return features;
+}
+
 export function extractKeywords(text: string): Map<string, number> {
   const counts = new Map<string, number>();
 
-  for (const word of removeStopwords(text.toLowerCase().split(/[^a-z0-9+]+/))) {
-    if (!word || word.length < 2) continue;
+  // tokenize (aligned with your Python token_pattern)
+  const tokens = generateFeatures(text.toLowerCase().match(TOKEN_REGEX) ?? []);
+
+  for (const word of tokens) {
     counts.set(word, (counts.get(word) ?? 0) + 1);
   }
 
-  // scale count for important keywords
+  // convert TF → TF-IDF
+  const tfidf = new Map<string, number>();
+
   for (const [word, count] of counts) {
-    if (importantKeyWords.has(word)) counts.set(word, count * 6);
+    const tf = 1 + Math.log(count);
+    const weight = tf * (idf[word] ?? 0);
+
+    tfidf.set(word, weight);
   }
-  return counts;
+
+  return tfidf;
 }
 
 export function getTopNKeywords({
