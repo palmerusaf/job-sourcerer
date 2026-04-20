@@ -3,11 +3,30 @@ import idf from '../../job-sourcerer-ats-idf-tf/idf.json' with { type: 'json' };
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{1,}\b/g;
 
+function generateFeatures(tokens: string[]): string[] {
+  const features: string[] = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    const a = tokens[i];
+    const b = tokens[i + 1];
+
+    // unigram
+    features.push(a);
+
+    // bigram
+    if (b) {
+      features.push(`${a} ${b}`);
+    }
+  }
+
+  return features;
+}
+
 export function extractKeywords(text: string): Map<string, number> {
   const counts = new Map<string, number>();
 
   // tokenize (aligned with your Python token_pattern)
-  const tokens = text.toLowerCase().match(TOKEN_REGEX) ?? [];
+  const tokens = generateFeatures(text.toLowerCase().match(TOKEN_REGEX) ?? []);
 
   for (const word of tokens) {
     counts.set(word, (counts.get(word) ?? 0) + 1);
