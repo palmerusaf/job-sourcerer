@@ -99,6 +99,10 @@ export default function App() {
                 content: <DisplaySettings />,
               },
               {
+                subMenu: 'Ghosted',
+                content: <GhostedSettings />,
+              },
+              {
                 subMenu: 'Export/Import Data',
                 content: <ImportExportData />,
               },
