@@ -99,7 +99,7 @@ export default function App() {
                 content: <DisplaySettings />,
               },
               {
-                subMenu: 'Ghosted',
+                subMenu: 'Auto-Ghosted',
                 content: <GhostedSettings />,
               },
               {
@@ -123,7 +123,7 @@ function NotImplemented() {
   );
 }
 
-function Loading() {
+export function Loading() {
   return (
     <div className='flex justify-center items-center h-full'>
       <div className='text-xl animate-pulse text-slate-500'>Loading...</div>

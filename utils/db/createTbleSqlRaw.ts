@@ -85,4 +85,10 @@ ALTER TABLE "job_status_history" ADD CONSTRAINT "job_status_history_job_id_jobs_
 ALTER TABLE "raw_resumes" DROP CONSTRAINT "raw_resumes_json_id_resumes_id_fk";
 --> statement-breakpoint
 ALTER TABLE "raw_resumes" ADD CONSTRAINT "raw_resumes_json_id_resumes_id_fk" FOREIGN KEY ("json_id") REFERENCES "public"."resumes"("id") ON DELETE cascade ON UPDATE no action;
+CREATE TABLE "ghosted_settings" (
+	"id" integer PRIMARY KEY DEFAULT 1 NOT NULL,
+	"enabled" boolean NOT NULL,
+	"days_til_ghosted" integer NOT NULL
+);
+
 `;
