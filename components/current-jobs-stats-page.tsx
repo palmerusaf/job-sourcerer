@@ -107,7 +107,9 @@ export default function CurrentJobsStatsPage() {
           },
         ]}
         layout={{
-          title: `Job Tracker Overview (${numJobs} total jobs)`,
+          title: {
+            text: `Job Tracker Overview (${numJobs} total jobs)`,
+          },
           font: { size: 14 },
           paper_bgcolor: 'transparent',
           plot_bgcolor: 'transparent',
