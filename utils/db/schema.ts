@@ -250,6 +250,12 @@ export const resumesRelations = relations(resumes, ({ many }) => ({
   rawResumes: many(rawResumes),
 }));
 
+export const ghostedSettingsTable = pgTable('ghosted_settings', {
+  id: integer('id').primaryKey().default(1),
+  enabled: boolean('enabled').notNull(),
+  daysTilGhosted: integer('days_til_ghosted').notNull(),
+});
+
 export const testSchema = pgTable('testSchema', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
   testField: text('test_field').notNull(),
