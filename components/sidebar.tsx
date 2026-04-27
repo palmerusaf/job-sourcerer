@@ -1,4 +1,5 @@
 import * as icon from 'lucide-react';
+import DiscordLogo from '/discord.svg';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -54,8 +55,17 @@ function _Layout({
   return (
     <SidebarProvider>
       <Sidebar collapsible='icon'>
-        <SidebarContent>
+        <SidebarContent className='flex justify-between'>
           <_NavMain setActive={setActive} items={menuData} />
+          <div className='flex justify-center mb-2 w-full'>
+            <a
+              href='https://discord.gg/haNFYn8aje'
+              className='flex gap-2 justify-center items-center font-bold'
+            >
+              <img src={DiscordLogo} className='h-4' />
+              Discord
+            </a>
+          </div>
         </SidebarContent>
         <SidebarRail />
       </Sidebar>
