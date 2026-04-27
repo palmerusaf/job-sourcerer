@@ -2,8 +2,10 @@ import { db } from './db';
 import { calculateCosineSimilarity } from '@/utils/extractKeywords';
 import { jobTable, rawResumes } from './schema';
 import { eq } from 'drizzle-orm';
+import { autoGhostJobs } from '@/components/ghosted-settings-page';
 
 export async function getSavedJobs() {
+  await autoGhostJobs();
   const res = await db
     .select()
     .from(jobTable)
