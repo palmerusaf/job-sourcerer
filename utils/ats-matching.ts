@@ -3,6 +3,7 @@ import idf from './idf.json' with { type: 'json' };
 import importantKeywordsArray from './important-keywords.json' with { type: 'json' };
 import { matchingAlgoSettingsTable } from './db/schema';
 import { db } from './db/db';
+import { calculateSbertSimilarity } from './sbert/sbert';
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
 
@@ -46,32 +47,15 @@ export async function calculateCosineSimilarity(
     keywordStrategy
   );
   if (enableSbert) {
-    const sbertScore = await _calculateSbertSimilarity(
+    const sbertScore = await calculateSbertSimilarity(
       jobDescription,
       resumeText
     );
     // Combine keyword score and SBERT score with reasonable weighting
-    // Using 50/50 blend to balance semantic understanding with keyword matching
-    return Math.round(keywordScore * 0.5 + sbertScore * 0.5);
+    // Using 80/20 blend to balance semantic understanding with keyword matching
+    return Math.round(keywordScore * 0.2 + sbertScore * 0.8);
   }
   return keywordScore;
-}
-
-async function _calculateSbertSimilarity(
-  jobDescription: string,
-  resumeText: string
-): Promise<number> {
-  // Placeholder for SBERT implementation
-  // In production, this would use a model like sentence-transformers
-  // For now, return a normalized score between 0 and 1
-  // This could be replaced with actual SBERT model inference
-
-  // Simulate network/model inference delay
-  return new Promise((res, _) => {
-    const timeout = setTimeout(() => {
-      res(0.0);
-    }, 1000); // Simulated delay of 100ms
-  });
 }
 
 function _getKeywordScore(

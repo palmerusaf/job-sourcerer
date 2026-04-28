@@ -9,12 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { db } from '@/utils/db/db';
-import {
-  JobWithScoreType,
-  jobTable,
-  rawResumes,
-  matchingAlgoSettingsTable,
-} from '@/utils/db/schema';
+import { JobWithScoreType, jobTable, rawResumes } from '@/utils/db/schema';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { eq } from 'drizzle-orm';
 import { Loader2, Pencil } from 'lucide-react';
