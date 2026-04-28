@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -45,8 +44,8 @@ export function MatchingAlgoSettings() {
                 </div>
               </FieldContent>
               <FieldDescription>
-                Enable SBERT to improve resume matching using sentence embeddings.
-                You can read more{' '}
+                Enable SBERT to improve resume matching using sentence
+                embeddings. You can read more{' '}
                 <a
                   href='https://www.sbert.net/'
                   target='_blank'
@@ -67,40 +66,56 @@ export function MatchingAlgoSettings() {
               <FieldContent>
                 <div className='flex gap-4 justify-center'>
                   <div className='flex gap-2 items-center'>
-                    <input
-                      type='radio'
-                      name='keyword-strategy'
-                      value='idf-tf'
-                      defaultChecked={settings.keywordStrategy === 'idf-tf'}
-                      checked={settings.keywordStrategy === 'idf-tf'}
-                      onChange={async (e) => {
-                        await updateSettings({
-                          enableSbert: settings.enableSbert,
-                          keywordStrategy: e.target.value as 'idf-tf' | 'hardcoded',
-                        });
-                      }}
-                      className='text-primary focus:ring-primary'
-                    />
-                    <label className='text-sm font-medium cursor-pointer'>
+                    <div className='flex items-center'>
+                      <input
+                        type='radio'
+                        name='keyword-strategy'
+                        id='keyword-strategy-idf-tf'
+                        value='idf-tf'
+                        defaultChecked={settings.keywordStrategy === 'idf-tf'}
+                        onChange={async (e) => {
+                          await updateSettings({
+                            enableSbert: settings.enableSbert,
+                            keywordStrategy: e.target.value as
+                              | 'idf-tf'
+                              | 'hardcoded',
+                          });
+                        }}
+                        className='text-primary focus:ring-primary'
+                      />
+                    </div>
+                    <label
+                      htmlFor='keyword-strategy-idf-tf'
+                      className='text-sm font-medium cursor-pointer'
+                    >
                       IDF-TF
                     </label>
                   </div>
                   <div className='flex gap-2 items-center'>
-                    <input
-                      type='radio'
-                      name='keyword-strategy'
-                      value='hardcoded'
-                      defaultChecked={settings.keywordStrategy === 'hardcoded'}
-                      checked={settings.keywordStrategy === 'hardcoded'}
-                      onChange={async (e) => {
-                        await updateSettings({
-                          enableSbert: settings.enableSbert,
-                          keywordStrategy: e.target.value as 'idf-tf' | 'hardcoded',
-                        });
-                      }}
-                      className='text-primary focus:ring-primary'
-                    />
-                    <label className='text-sm font-medium cursor-pointer'>
+                    <div className='flex items-center'>
+                      <input
+                        type='radio'
+                        id='keyword-strategy-hardcoded'
+                        name='keyword-strategy'
+                        value='hardcoded'
+                        defaultChecked={
+                          settings.keywordStrategy === 'hardcoded'
+                        }
+                        onChange={async (e) => {
+                          await updateSettings({
+                            enableSbert: settings.enableSbert,
+                            keywordStrategy: e.target.value as
+                              | 'idf-tf'
+                              | 'hardcoded',
+                          });
+                        }}
+                        className='text-primary focus:ring-primary'
+                      />
+                    </div>
+                    <label
+                      htmlFor='keyword-strategy-hardcoded'
+                      className='text-sm font-medium cursor-pointer'
+                    >
                       Hardcoded Keywords
                     </label>
                   </div>
@@ -111,16 +126,9 @@ export function MatchingAlgoSettings() {
                 keyword matching.
               </FieldDescription>
             </Field>
-            <Field orientation='horizontal'>
-              <Button type='submit' onClick={async () => {}}>
-                Save
-              </Button>
-            </Field>
           </FieldGroup>
         </CardContent>
-      )) || (
-        <div className='py-4'>Loading...</div>
-      )}
+      )) || <div className='py-4'>Loading...</div>}
     </Card>
   );
 }
