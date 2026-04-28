@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { textToJsonResume } from "@/utils/textToJsonResume";
 import { createResume, addRawResume } from "@/utils/db/resumes";
-import { extractKeywords, getTopNKeywords } from "@/utils/extractKeywords";
+import { extractKeywords, getTopNKeywords } from "@/utils/ats-matching";
 
 export default function ResumePasteForm() {
   const [text, setText] = useState("");

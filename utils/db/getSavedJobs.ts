@@ -1,5 +1,5 @@
 import { db } from './db';
-import { calculateCosineSimilarity } from '@/utils/extractKeywords';
+import { calculateCosineSimilarity } from '@/utils/ats-matching';
 import { jobTable, rawResumes } from './schema';
 import { eq } from 'drizzle-orm';
 import { autoGhostJobs } from '@/components/ghosted-settings-page';
