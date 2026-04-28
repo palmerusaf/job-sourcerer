@@ -67,7 +67,13 @@ export function extractKeywordsWithIdf(text: string): Map<string, number> {
   return tfidf;
 }
 
-export function extractKeywords(text: string): Map<string, number> {
+export function extractKeywords(
+  text: string,
+  strategy: 'idf-tf' | 'hardcoded' = 'idf-tf'
+): Map<string, number> {
+  if (strategy === 'hardcoded') {
+    return hardcodedKeywords(text);
+  }
   return extractKeywordsWithIdf(text);
 }
 
@@ -86,11 +92,12 @@ export function getTopNKeywords({
 
 export function calculateCosineSimilarity(
   jobDescription: string,
-  resumeText: string
-) {
+  resumeText: string,
+  strategy: 'idf-tf' | 'hardcoded' = 'idf-tf'
+): number {
   // Extract keywords
-  const jobKeywords = extractKeywords(jobDescription);
-  const resumeKeywords = extractKeywords(resumeText);
+  const jobKeywords = extractKeywords(jobDescription, strategy);
+  const resumeKeywords = extractKeywords(resumeText, strategy);
 
   // Combine all keywords
   const keywords = new Set([...jobKeywords.keys(), ...resumeKeywords.keys()]);
