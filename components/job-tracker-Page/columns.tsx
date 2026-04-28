@@ -1,7 +1,7 @@
 import logo from '/wxt.svg';
 import {
-  appliedJobsTable,
   JobSelectType,
+  JobWithScoreType,
   jobStatus,
   jobStatusEmojis,
   jobStatusHistoryTable,
@@ -20,7 +20,7 @@ import { Checkbox } from '../ui/checkbox';
 import { AsyncButton } from '../async-button';
 import { removeTrackedJob } from '@/utils/storage/trackedJobs';
 
-export const columns: ColumnDef<JobSelectType>[] = [
+export const columns: ColumnDef<JobWithScoreType>[] = [
   {
     id: 'select',
     header: ({ table }) => (

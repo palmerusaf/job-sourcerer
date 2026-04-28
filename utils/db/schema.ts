@@ -122,6 +122,11 @@ export const appliedJobsTable = pgTable('applied_jobs', {
 
 export type JobSelectType = typeof jobTable.$inferSelect;
 
+// Job with calculated resume match score
+export type JobWithScoreType = JobSelectType & {
+  score: number;
+};
+
 // Manual Add Job
 export type JobInsertType = typeof jobTable.$inferInsert;
 export const addJobFormSchema: z.ZodType<JobInsertType> = z.object({
@@ -254,6 +259,15 @@ export const ghostedSettingsTable = pgTable('ghosted_settings', {
   id: integer('id').primaryKey().default(1),
   enabled: boolean('enabled').notNull(),
   daysTilGhosted: integer('days_til_ghosted').notNull(),
+});
+
+export const matchingAlgoSettingsTable = pgTable('matching_algo_settings', {
+  id: integer('id').primaryKey().default(1),
+  enableSbert: boolean('enable_sbert').notNull().default(true),
+  keywordStrategy: text('keyword_strategy')
+    .$type<'idf-tf' | 'hardcoded' | 'hybrid'>()
+    .notNull()
+    .default('idf-tf'),
 });
 
 export const testSchema = pgTable('testSchema', {

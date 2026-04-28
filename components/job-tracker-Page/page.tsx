@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 
 import {
   JobSelectType,
+  JobWithScoreType,
   jobStatus,
   jobStatusEmojis,
   JobStatusType,
@@ -19,7 +20,7 @@ import { getSavedJobs } from '@/utils/db/getSavedJobs';
 import { Input } from '../ui/input';
 
 export function JobTrackerPage() {
-  const { data } = useQuery<JobSelectType[]>({
+  const { data } = useQuery<JobWithScoreType[]>({
     queryKey: ['savedJobs'],
     queryFn: getSavedJobs,
   });

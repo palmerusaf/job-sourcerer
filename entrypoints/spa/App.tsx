@@ -99,6 +99,10 @@ export default function App() {
                 content: <DisplaySettings />,
               },
               {
+                subMenu: 'Matching Algorithm',
+                content: <MatchingAlgoSettings />,
+              },
+              {
                 subMenu: 'Auto-Ghosted',
                 content: <GhostedSettings />,
               },
