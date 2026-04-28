@@ -33,9 +33,28 @@ export function getTopNKeywords({
 export function calculateCosineSimilarity(
   jobDescription: string,
   resumeText: string,
-  strategy: 'idf-tf' | 'hardcoded' = 'idf-tf'
+  strategy: 'idf-tf' | 'hardcoded' = 'idf-tf',
+  useSbert = false
 ): number {
-  return _getKeywordScore(jobDescription, resumeText, strategy);
+  const keywordScore = _getKeywordScore(jobDescription, resumeText, strategy);
+  if (useSbert) {
+    const sbertScore = _calculateSbertSimilarity(jobDescription, resumeText);
+    // Combine keyword score and SBERT score with reasonable weighting
+    // Using 50/50 blend to balance semantic understanding with keyword matching
+    return Math.round((keywordScore * 0.5 + sbertScore * 0.5) * 100);
+  }
+  return keywordScore;
+}
+
+function _calculateSbertSimilarity(
+  jobDescription: string,
+  resumeText: string
+): number {
+  // Placeholder for SBERT implementation
+  // In production, this would use a model like sentence-transformers
+  // For now, return a normalized score between 0 and 1
+  // This could be replaced with actual SBERT model inference
+  return 0.5;
 }
 
 function _getKeywordScore(
