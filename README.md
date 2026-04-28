@@ -95,6 +95,7 @@ Simplify the job/internship application process by centralizing jobs/resumes in 
 - [TailwindCSS](https://tailwindcss.com/)
 - [TypeScript](https://www.typescriptlang.org/docs/)
 - [WXT](https://wxt.dev/guide/introduction.html)
+- [@xenova/transformers](https://github.com/xenova/transformers.js) - For semantic text matching with SBERT
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -167,8 +168,13 @@ There are two ways get a resume into the dashboard. You can create a new resume 
 The keyword matching strategy can be configured in the Matching Settings page. You can choose between:
 - **IDF-TF**: Uses statistical term weighting with TF-IDF scoring
 - **Hardcoded Keywords**: Uses predefined important keywords with boosted weights
+- **Hybrid**: Uses a weighted combination of SBERT, TF-IDF, and keyword matching
 
 This setting is stored in the database and applies to all resume matching calculations.
+
+### Semantic Text Matching (SBERT)
+
+Job Sourcerer now uses SBERT (Sentence-BERT) for semantic text similarity matching. This allows for more accurate matching of resumes to job descriptions by understanding the semantic meaning of the text rather than just keyword matching. The SBERT model is loaded from Hugging Face Hub and runs locally in your browser.
 
 ### Viewing Previous Applications
 
