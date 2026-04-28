@@ -4,10 +4,9 @@ import { matchingAlgoSettingsTable } from '@/utils/db/schema';
 import { eq } from 'drizzle-orm';
 
 export function useMatchingAlgoSettings() {
-  const [settings, setSettings] = useState<null | {
-    enableSbert: boolean;
-    keywordStrategy: 'idf-tf' | 'hardcoded';
-  }>(null);
+  const [settings, setSettings] = useState<
+    null | typeof matchingAlgoSettingsTable.$inferInsert
+  >(null);
 
   useEffect(() => {
     _getMatchingAlgoSettings().then(setSettings);
@@ -16,10 +15,7 @@ export function useMatchingAlgoSettings() {
   async function updateSettings({
     enableSbert,
     keywordStrategy,
-  }: {
-    enableSbert: boolean;
-    keywordStrategy: 'idf-tf' | 'hardcoded';
-  }) {
+  }: typeof matchingAlgoSettingsTable.$inferInsert) {
     setSettings(() => ({ enableSbert, keywordStrategy }));
     await db
       .update(matchingAlgoSettingsTable)
@@ -40,4 +36,3 @@ async function _getMatchingAlgoSettings() {
   const res = await db.select().from(matchingAlgoSettingsTable);
   return res[0];
 }
-

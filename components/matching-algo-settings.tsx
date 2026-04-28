@@ -80,7 +80,8 @@ export function MatchingAlgoSettings() {
                             enableSbert: settings.enableSbert,
                             keywordStrategy: e.target.value as
                               | 'idf-tf'
-                              | 'hardcoded',
+                              | 'hardcoded'
+                              | 'hybrid',
                           });
                           toast.success(
                             'IDF-TF selected - Using statistical term weighting with TF-IDF scoring'
@@ -111,7 +112,8 @@ export function MatchingAlgoSettings() {
                             enableSbert: settings.enableSbert,
                             keywordStrategy: e.target.value as
                               | 'idf-tf'
-                              | 'hardcoded',
+                              | 'hardcoded'
+                              | 'hybrid',
                           });
                           toast.success(
                             'Hardcoded Keywords selected - Using predefined important keywords with boosted weights'
@@ -125,6 +127,36 @@ export function MatchingAlgoSettings() {
                       className='text-sm font-medium cursor-pointer'
                     >
                       Hardcoded Keywords
+                    </label>
+                  </div>
+                  <div className='flex gap-2 items-center'>
+                    <div className='flex items-center'>
+                      <input
+                        type='radio'
+                        id='keyword-strategy-hybrid-keymatch'
+                        name='keyword-strategy'
+                        value='hybrid'
+                        defaultChecked={settings.keywordStrategy === 'hybrid'}
+                        onChange={async (e) => {
+                          await updateSettings({
+                            enableSbert: settings.enableSbert,
+                            keywordStrategy: e.target.value as
+                              | 'idf-tf'
+                              | 'hardcoded'
+                              | 'hybrid',
+                          });
+                          toast.success(
+                            'Hybrid Keymatch selected - Using weighted combination of SBERT, TF-IDF, and keyword matching'
+                          );
+                        }}
+                        className='text-primary focus:ring-primary'
+                      />
+                    </div>
+                    <label
+                      htmlFor='keyword-strategy-hybrid-keymatch'
+                      className='text-sm font-medium cursor-pointer'
+                    >
+                      Hybrid
                     </label>
                   </div>
                 </div>

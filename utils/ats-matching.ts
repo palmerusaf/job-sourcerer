@@ -46,14 +46,15 @@ export async function calculateCosineSimilarity(
     resumeText,
     keywordStrategy
   );
+  console.log({ keywordScore });
+
   if (enableSbert) {
     const sbertScore = await calculateSbertSimilarity(
       jobDescription,
       resumeText
     );
     // Combine keyword score and SBERT score with reasonable weighting
-    // Using 80/20 blend to balance semantic understanding with keyword matching
-    return Math.round(keywordScore * 0.2 + sbertScore * 0.8);
+    return Math.round(keywordScore * 0.25 + sbertScore * 0.75);
   }
   return keywordScore;
 }
@@ -61,8 +62,15 @@ export async function calculateCosineSimilarity(
 function _getKeywordScore(
   jobDescription: string,
   resumeText: string,
-  strategy: 'idf-tf' | 'hardcoded' = 'idf-tf'
-) {
+  strategy: 'idf-tf' | 'hardcoded' | 'hybrid' = 'idf-tf'
+): number {
+  if (strategy === 'hybrid') {
+    const idf = _getKeywordScore(jobDescription, resumeText, 'idf-tf') / 100;
+    const hard =
+      _getKeywordScore(jobDescription, resumeText, 'hardcoded') / 100;
+    return Math.round((idf * 0.6 + hard * 0.4) * 100);
+  }
+
   // Extract keywords
   const jobKeywords = extractKeywords(jobDescription, strategy);
   const resumeKeywords = extractKeywords(resumeText, strategy);

@@ -264,9 +264,8 @@ export const ghostedSettingsTable = pgTable('ghosted_settings', {
 export const matchingAlgoSettingsTable = pgTable('matching_algo_settings', {
   id: integer('id').primaryKey().default(1),
   enableSbert: boolean('enable_sbert').notNull().default(true),
-  keywordStrategy: text('keyword_strategy').$type<
-    'idf-tf' | 'hardcoded'
-  >()
+  keywordStrategy: text('keyword_strategy')
+    .$type<'idf-tf' | 'hardcoded' | 'hybrid'>()
     .notNull()
     .default('idf-tf'),
 });
