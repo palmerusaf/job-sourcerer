@@ -1,5 +1,6 @@
 import Similarity from 'compute-cosine-similarity';
 import idf from './idf.json' with { type: 'json' };
+import importantKeywordsArray from './important-keywords.json' with { type: 'json' };
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
 
@@ -22,7 +23,28 @@ function generateFeatures(tokens: string[]): string[] {
   return features;
 }
 
-export function extractKeywords(text: string): Map<string, number> {
+// Convert array to Set for fast lookups
+const importantKeywords = new Set(importantKeywordsArray);
+
+export function hardcodedKeywords(text: string): Map<string, number> {
+  const counts = new Map<string, number>();
+
+  // tokenize (aligned with your Python token_pattern)
+  const tokens = text.toLowerCase().match(TOKEN_REGEX) ?? [];
+
+  for (const word of tokens) {
+    counts.set(word, (counts.get(word) ?? 0) + 1);
+  }
+
+  // scale count for important keywords
+  for (const [word, count] of counts) {
+    if (importantKeywords.has(word)) counts.set(word, count * 6);
+  }
+
+  return counts;
+}
+
+export function extractKeywordsWithIdf(text: string): Map<string, number> {
   const counts = new Map<string, number>();
 
   // tokenize (aligned with your Python token_pattern)
@@ -37,12 +59,16 @@ export function extractKeywords(text: string): Map<string, number> {
 
   for (const [word, count] of counts) {
     const tf = 1 + Math.log(count);
-    const weight = tf * (idf[word] ?? 0);
+    const weight = tf * (idf[word as keyof typeof idf] ?? 0);
 
     tfidf.set(word, weight);
   }
 
   return tfidf;
+}
+
+export function extractKeywords(text: string): Map<string, number> {
+  return extractKeywordsWithIdf(text);
 }
 
 export function getTopNKeywords({
