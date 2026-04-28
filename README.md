@@ -162,6 +162,14 @@ You can update a job's status by clicking on the status and selecting a new stat
 
 There are two ways get a resume into the dashboard. You can create a new resume through the resume builder, or you can upload the raw resume text from an existing external resume. Once a resume is uploaded a keyword matching algorithm is used to score the resume against a job.
 
+### Keyword Matching Strategy
+
+The keyword matching strategy can be configured in the Matching Settings page. You can choose between:
+- **IDF-TF**: Uses statistical term weighting with TF-IDF scoring
+- **Hardcoded Keywords**: Uses predefined important keywords with boosted weights
+
+This setting is stored in the database and applies to all resume matching calculations.
+
 ### Viewing Previous Applications
 
 You can view previous applied jobs on the previous apps page. This will include all jobs that have the status of applied, interview scheduled, rejected, ghosted, or received offer regardless of if the job is archived. This list is grouped by company name. You can filter by company with the search bar.
