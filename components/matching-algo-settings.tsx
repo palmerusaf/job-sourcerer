@@ -8,8 +8,6 @@ import {
   FieldDescription,
   FieldGroup,
 } from '@/components/ui/field';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 import { useMatchingAlgoSettings } from '@/hooks/useMatchingAlgoSettings';
 
 export function MatchingAlgoSettings() {
