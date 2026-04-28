@@ -8,6 +8,7 @@ import {
   FieldGroup,
 } from '@/components/ui/field';
 import { useMatchingAlgoSettings } from '@/hooks/useMatchingAlgoSettings';
+import { toast } from 'sonner';
 
 export function MatchingAlgoSettings() {
   const { settings, updateSettings } = useMatchingAlgoSettings();
@@ -33,6 +34,7 @@ export function MatchingAlgoSettings() {
                         enableSbert: checked,
                         keywordStrategy: settings.keywordStrategy,
                       });
+                      toast.success('SBERT settings updated');
                     }}
                   />
                   <label
@@ -80,6 +82,9 @@ export function MatchingAlgoSettings() {
                               | 'idf-tf'
                               | 'hardcoded',
                           });
+                          toast.success(
+                            'IDF-TF selected - Using statistical term weighting with TF-IDF scoring'
+                          );
                         }}
                         className='text-primary focus:ring-primary'
                       />
@@ -108,6 +113,9 @@ export function MatchingAlgoSettings() {
                               | 'idf-tf'
                               | 'hardcoded',
                           });
+                          toast.success(
+                            'Hardcoded Keywords selected - Using predefined important keywords with boosted weights'
+                          );
                         }}
                         className='text-primary focus:ring-primary'
                       />
