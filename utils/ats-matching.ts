@@ -41,7 +41,7 @@ export function calculateCosineSimilarity(
     const sbertScore = _calculateSbertSimilarity(jobDescription, resumeText);
     // Combine keyword score and SBERT score with reasonable weighting
     // Using 50/50 blend to balance semantic understanding with keyword matching
-    return Math.round((keywordScore * 0.5 + sbertScore * 0.5) * 100);
+    return Math.round(keywordScore * 0.5 + sbertScore * 0.5);
   }
   return keywordScore;
 }
@@ -54,7 +54,7 @@ function _calculateSbertSimilarity(
   // In production, this would use a model like sentence-transformers
   // For now, return a normalized score between 0 and 1
   // This could be replaced with actual SBERT model inference
-  return 0.5;
+  return 0.0;
 }
 
 function _getKeywordScore(
