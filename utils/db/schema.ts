@@ -122,6 +122,11 @@ export const appliedJobsTable = pgTable('applied_jobs', {
 
 export type JobSelectType = typeof jobTable.$inferSelect;
 
+// Job with calculated resume match score
+export type JobWithScoreType = JobSelectType & {
+  score: number;
+};
+
 // Manual Add Job
 export type JobInsertType = typeof jobTable.$inferInsert;
 export const addJobFormSchema: z.ZodType<JobInsertType> = z.object({

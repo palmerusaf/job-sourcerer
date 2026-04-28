@@ -11,6 +11,7 @@ import {
 import { db } from '@/utils/db/db';
 import {
     JobSelectType,
+    JobWithScoreType,
     jobTable,
     rawResumes,
     matchingAlgoSettingsTable,
@@ -21,7 +22,7 @@ import { Loader2, Pencil } from 'lucide-react';
 import { Button } from '../ui/button';
 import { calculateCosineSimilarity } from '@/utils/ats-matching';
 
-export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
+export function ResumeMatchesModal({ jobData }: { jobData: JobWithScoreType }) {
     const { resumeId, description } = jobData;
     const qc = useQueryClient();
     const [strategy, setStrategy] = useState<'idf-tf' | 'hardcoded'>('idf-tf');
