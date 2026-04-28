@@ -22,7 +22,7 @@ export function MatchingAlgoSettings(): JSX.Element {
         </div>
         <p>
           *SBERT is a machine learning algorithm that can compare document
-          senteces. This will improve the resume matching score at the expense
+          sentences. This will improve the resume matching score at the expense
           of performance. You can read more <a href=''>here</a>.
         </p>
       </Card.CardContent>
