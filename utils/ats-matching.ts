@@ -1,6 +1,8 @@
 import Similarity from 'compute-cosine-similarity';
 import idf from './idf.json' with { type: 'json' };
 import importantKeywordsArray from './important-keywords.json' with { type: 'json' };
+import { matchingAlgoSettingsTable } from './db/schema';
+import { db } from './db/db';
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
 
@@ -30,15 +32,24 @@ export function getTopNKeywords({
     .map(([k]) => k);
 }
 
-export function calculateCosineSimilarity(
+export async function calculateCosineSimilarity(
   jobDescription: string,
-  resumeText: string,
-  strategy: 'idf-tf' | 'hardcoded' = 'idf-tf',
-  useSbert = false
-): number {
-  const keywordScore = _getKeywordScore(jobDescription, resumeText, strategy);
-  if (useSbert) {
-    const sbertScore = _calculateSbertSimilarity(jobDescription, resumeText);
+  resumeText: string
+): Promise<number> {
+  const [{ enableSbert, keywordStrategy }] = await db
+    .select()
+    .from(matchingAlgoSettingsTable)
+    .limit(1);
+  const keywordScore = _getKeywordScore(
+    jobDescription,
+    resumeText,
+    keywordStrategy
+  );
+  if (enableSbert) {
+    const sbertScore = await _calculateSbertSimilarity(
+      jobDescription,
+      resumeText
+    );
     // Combine keyword score and SBERT score with reasonable weighting
     // Using 50/50 blend to balance semantic understanding with keyword matching
     return Math.round(keywordScore * 0.5 + sbertScore * 0.5);
@@ -46,15 +57,21 @@ export function calculateCosineSimilarity(
   return keywordScore;
 }
 
-function _calculateSbertSimilarity(
+async function _calculateSbertSimilarity(
   jobDescription: string,
   resumeText: string
-): number {
+): Promise<number> {
   // Placeholder for SBERT implementation
   // In production, this would use a model like sentence-transformers
   // For now, return a normalized score between 0 and 1
   // This could be replaced with actual SBERT model inference
-  return 0.0;
+
+  // Simulate network/model inference delay
+  return new Promise((res, _) => {
+    const timeout = setTimeout(() => {
+      res(0.0);
+    }, 1000); // Simulated delay of 100ms
+  });
 }
 
 function _getKeywordScore(

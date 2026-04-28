@@ -6,25 +6,27 @@ import { autoGhostJobs } from '@/components/ghosted-settings-page';
 
 export async function getSavedJobs() {
   await autoGhostJobs();
-  const settings = await db.select({ keywordStrategy: matchingAlgoSettingsTable.keywordStrategy }).from(matchingAlgoSettingsTable).limit(1);
-  const strategy = settings[0]?.keywordStrategy ?? 'idf-tf';
+  const [{ enableSbert, keywordStrategy }] = await db
+    .select()
+    .from(matchingAlgoSettingsTable)
+    .limit(1);
   const res = await db
     .select()
     .from(jobTable)
     .where(eq(jobTable.archived, false))
     .leftJoin(rawResumes, eq(jobTable.resumeId, rawResumes.id));
-  return res
-    .map((i) => {
+  const scoredResults = await Promise.all(
+    res.map(async (i) => {
       return {
         ...i.jobs,
         score: !i?.raw_resumes
           ? -1
-          : calculateCosineSimilarity(
+          : await calculateCosineSimilarity(
             i.jobs.description,
-            i.raw_resumes.rawText,
-            strategy
+            i.raw_resumes.rawText
           ),
       };
     })
-    .sort((a, b) => b.score - a.score);
+  );
+  return scoredResults.sort((a, b) => b.score - a.score);
 }
