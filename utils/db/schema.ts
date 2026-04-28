@@ -256,6 +256,16 @@ export const ghostedSettingsTable = pgTable('ghosted_settings', {
   daysTilGhosted: integer('days_til_ghosted').notNull(),
 });
 
+export const matchingAlgoSettingsTable = pgTable('matching_algo_settings', {
+  id: integer('id').primaryKey().default(1),
+  enableSbert: boolean('enable_sbert').notNull().default(true),
+  keywordStrategy: text('keyword_strategy').$type<
+    'idf-tf' | 'hardcoded'
+  >()
+    .notNull()
+    .default('idf-tf'),
+});
+
 export const testSchema = pgTable('testSchema', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
   testField: text('test_field').notNull(),
