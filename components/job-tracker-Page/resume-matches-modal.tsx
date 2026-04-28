@@ -9,15 +9,17 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { db } from '@/utils/db/db';
-import { JobSelectType, jobTable, rawResumes } from '@/utils/db/schema';
+import { JobSelectType, jobTable, rawResumes, matchingAlgoSettingsTable } from '@/utils/db/schema';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { eq } from 'drizzle-orm';
 import { Loader2, Pencil } from 'lucide-react';
 import { Button } from '../ui/button';
+import { calculateCosineSimilarity } from '@/utils/ats-matching';
 
 export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
     const { resumeId, description } = jobData;
     const qc = useQueryClient();
+    const [strategy, setStrategy] = useState<'idf-tf' | 'hardcoded'>('idf-tf');
     const { data, isPending } = useQuery({
         queryKey: ['savedJobs', { resumeId, description }],
         queryFn: getData,
@@ -33,6 +35,7 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
                 <ResumeScore
                     jobText={data?.find((el) => el.jsonId === resumeId)?.rawText ?? ''}
                     resumeText={description}
+                    strategy={strategy}
                 />
                 <Pencil className='my-auto' />
             </span>
@@ -55,7 +58,7 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
     function List() {
         const _data = data
             ?.map((item) => ({
-                score: calculateCosineSimilarity(item.rawText, description),
+                score: calculateCosineSimilarity(item.rawText, description, strategy),
                 ...item,
             }))
             .sort((a, b) => b.score - a.score);
@@ -72,7 +75,7 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
                             <>
                                 <span className='my-auto'>{name}</span>
                                 <span className='mx-auto max-w-10'>
-                                    <ResumeScore jobText={rawText} resumeText={description} />
+                                    <ResumeScore jobText={rawText} resumeText={description} strategy={strategy} />
                                 </span>
                                 {jsonId === resumeId ? (
                                     <Button disabled>Linked</Button>
@@ -94,6 +97,8 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobSelectType }) {
         );
     }
     async function getData() {
+        const settings = await db.select({ keywordStrategy: matchingAlgoSettingsTable.keywordStrategy }).from(matchingAlgoSettingsTable).limit(1);
+        setStrategy(settings[0]?.keywordStrategy ?? 'idf-tf');
         return await db.select().from(rawResumes);
     }
 }
@@ -113,11 +118,13 @@ export async function linkResume(
 function ResumeScore({
     jobText,
     resumeText,
+    strategy,
 }: {
     jobText: string;
     resumeText: string;
+    strategy: 'idf-tf' | 'hardcoded';
 }) {
-    const score = calculateCosineSimilarity(jobText, resumeText);
+    const score = calculateCosineSimilarity(jobText, resumeText, strategy);
     return (
         <CircularProgressbar
             styles={buildStyles({

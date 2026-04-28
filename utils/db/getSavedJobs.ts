@@ -1,11 +1,13 @@
 import { db } from './db';
 import { calculateCosineSimilarity } from '@/utils/ats-matching';
-import { jobTable, rawResumes } from './schema';
+import { jobTable, rawResumes, matchingAlgoSettingsTable } from './schema';
 import { eq } from 'drizzle-orm';
 import { autoGhostJobs } from '@/components/ghosted-settings-page';
 
 export async function getSavedJobs() {
   await autoGhostJobs();
+  const settings = await db.select({ keywordStrategy: matchingAlgoSettingsTable.keywordStrategy }).from(matchingAlgoSettingsTable).limit(1);
+  const strategy = settings[0]?.keywordStrategy ?? 'idf-tf';
   const res = await db
     .select()
     .from(jobTable)
@@ -19,7 +21,8 @@ export async function getSavedJobs() {
           ? -1
           : calculateCosineSimilarity(
             i.jobs.description,
-            i.raw_resumes.rawText
+            i.raw_resumes.rawText,
+            strategy
           ),
       };
     })

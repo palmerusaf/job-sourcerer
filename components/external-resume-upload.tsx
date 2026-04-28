@@ -4,14 +4,27 @@ import { toast } from "sonner";
 import { textToJsonResume } from "@/utils/textToJsonResume";
 import { createResume, addRawResume } from "@/utils/db/resumes";
 import { extractKeywords, getTopNKeywords } from "@/utils/ats-matching";
+import { db } from "@/utils/db/db";
+import { matchingAlgoSettingsTable } from "@/utils/db/schema";
 
 export default function ResumePasteForm() {
   const [text, setText] = useState("");
   const [recordName, setRecordName] = useState(""); // NEW
 
+  const [strategy, setStrategy] = useState<'idf-tf' | 'hardcoded'>('idf-tf');
+
+  async function loadStrategy() {
+    const settings = await db.select({ keywordStrategy: matchingAlgoSettingsTable.keywordStrategy }).from(matchingAlgoSettingsTable).limit(1);
+    setStrategy(settings[0]?.keywordStrategy ?? 'idf-tf');
+  }
+
+  React.useEffect(() => {
+    loadStrategy();
+  }, []);
+
   const keywords = useMemo(
-    () => getTopNKeywords({ keywordMap: extractKeywords(text), numKeywords: 25 }),
-    [text]
+    () => getTopNKeywords({ keywordMap: extractKeywords(text, strategy), numKeywords: 25 }),
+    [text, strategy]
   );
 
   async function handleSave() {
