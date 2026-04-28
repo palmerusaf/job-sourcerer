@@ -3,7 +3,7 @@ import idf from './idf.json' with { type: 'json' };
 import importantKeywordsArray from './important-keywords.json' with { type: 'json' };
 import { matchingAlgoSettingsTable } from './db/schema';
 import { db } from './db/db';
-import { calculateSbertSimilarity } from './sbert/sbert';
+import { calculateSbertSimilarity, cleanText } from './sbert/sbert';
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
 
@@ -41,17 +41,22 @@ export async function calculateCosineSimilarity(
     .select()
     .from(matchingAlgoSettingsTable)
     .limit(1);
+
+  // Clean both texts to remove HTML and normalize
+  const cleanedJobDescription = cleanText(jobDescription);
+  const cleanedResumeText = cleanText(resumeText);
+
   const keywordScore = _getKeywordScore(
-    jobDescription,
-    resumeText,
+    cleanedJobDescription,
+    cleanedResumeText,
     keywordStrategy
   );
   console.log({ keywordScore });
 
   if (enableSbert) {
     const sbertScore = await calculateSbertSimilarity(
-      jobDescription,
-      resumeText
+      cleanedJobDescription,
+      cleanedResumeText
     );
     // Combine keyword score and SBERT score with reasonable weighting
     return Math.round(keywordScore * 0.25 + sbertScore * 0.75);
