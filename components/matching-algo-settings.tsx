@@ -1,31 +1,87 @@
-import * as Card from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import {
+  Field,
+  FieldContent,
+  FieldLabel,
+  FieldDescription,
+} from '@/components/ui/field';
 import { JSX } from 'react';
 
 export function MatchingAlgoSettings(): JSX.Element {
   return (
-    <Card.Card className='flex flex-col items-center mx-auto w-full max-w-2xl'>
-      <Card.CardHeader>
-        <Card.CardTitle>
+    <Card className='flex flex-col items-center mx-auto w-full max-w-2xl'>
+      <CardHeader>
+        <CardTitle>
           <div className='text-xl'>Matching Settings</div>
-        </Card.CardTitle>
-      </Card.CardHeader>
-      <Card.CardContent className='flex flex-col gap-2 px-12 w-full'>
-        <div className='flex gap-2 justify-center items-center w-full'>
-          <Switch id='airplane-mode' onCheckedChange={console.log} />
-          <label
-            className='text-lg font-bold cursor-pointer select-none'
-            htmlFor='airplane-mode'
-          >
-            Enable SBERT
-          </label>
-        </div>
-        <p>
-          *SBERT is a machine learning algorithm that can compare document
-          sentences. This will improve the resume matching score at the expense
-          of performance. You can read more <a href='https://www.sbert.net/' target='_blank' rel='noopener noreferrer'>here</a>.
-        </p>
-      </Card.CardContent>
-    </Card.Card>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className='flex flex-col gap-2 px-12 w-full'>
+        <Field>
+          <FieldContent>
+            <div className='flex gap-2 justify-center items-center w-full'>
+              <Switch id='enable-sbert' onCheckedChange={console.log} />
+              <label
+                className='text-lg font-bold cursor-pointer select-none'
+                htmlFor='enable-sbert'
+              >
+                Enable SBERT
+              </label>
+            </div>
+          </FieldContent>
+          <FieldDescription>
+            Enable SBERT to improve resume matching using sentence embeddings.
+            You can read more{' '}
+            <a
+              href='https://www.sbert.net/'
+              target='_blank'
+              rel='noopener noreferrer'
+              className='underline'
+            >
+              here
+            </a>
+            .
+          </FieldDescription>
+        </Field>
+        <Field>
+          <div className='flex justify-center'>
+            <FieldLabel className='text-lg font-bold'>
+              Keyword Matching Strategy
+            </FieldLabel>
+          </div>
+          <FieldContent>
+            <div className='flex gap-4 justify-center'>
+              <div className='flex gap-2 items-center'>
+                <input
+                  type='radio'
+                  name='keyword-strategy'
+                  value='idf-tf'
+                  defaultChecked
+                  className='text-primary focus:ring-primary'
+                />
+                <label className='text-sm font-medium cursor-pointer'>
+                  IDF-TF
+                </label>
+              </div>
+              <div className='flex gap-2 items-center'>
+                <input
+                  type='radio'
+                  name='keyword-strategy'
+                  value='hardcoded'
+                  className='text-primary focus:ring-primary'
+                />
+                <label className='text-sm font-medium cursor-pointer'>
+                  Hardcoded Keywords
+                </label>
+              </div>
+            </div>
+          </FieldContent>
+          <FieldDescription>
+            Choose between statistical term weighting (IDF-TF) or predefined
+            keyword matching.
+          </FieldDescription>
+        </Field>
+      </CardContent>
+    </Card>
   );
 }
