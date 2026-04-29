@@ -32,7 +32,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSidebarState } from '@/hooks/useSidebarState';
 
 function _Layout({
   menu,
@@ -165,19 +166,23 @@ function _NavMain({
 }
 export type MenuData = {
   menu: string;
+  url: string;
   icon: React.ForwardRefExoticComponent<
     Omit<icon.LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
   >;
+  isActive?: boolean;
   items: {
     subMenu: string;
+    url: string;
     content: React.ReactNode;
   }[];
 };
 export const SideBar = ({ menuData }: { menuData: MenuData[] }) => {
-  const [active, setActive] = useState<{ menu: string; submenu: string }>({
+  const defaultState = {
     menu: menuData[0].menu,
     submenu: menuData[0].items[0].subMenu,
-  });
+  };
+  const [active, setActive] = useSidebarState(defaultState);
   const pageContent = menuData
     .find((item) => item.menu === active.menu)
     ?.items.find((item) => item.subMenu === active.submenu)?.content;
