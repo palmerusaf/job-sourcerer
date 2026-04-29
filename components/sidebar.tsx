@@ -33,7 +33,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { useEffect, useState } from 'react';
-import { useSidebarState } from '@/hooks/useSidebarState';
+import { useSidebarState, type SidebarState } from '@/hooks/useSidebarState';
 
 function _Layout({
   menu,
@@ -178,7 +178,7 @@ export type MenuData = {
   }[];
 };
 export const SideBar = ({ menuData }: { menuData: MenuData[] }) => {
-  const defaultState = {
+  const defaultState: SidebarState = {
     menu: menuData[0].menu,
     submenu: menuData[0].items[0].subMenu,
   };
