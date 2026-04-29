@@ -29,6 +29,120 @@ export function ResumeDisplay() {
     }
   }, [selectedIndex, resumes]);
 
+  const getKeywords = () => {
+    const resume = resumes[selectedIndex];
+    const keywords: string[] = [];
+
+    // Get keywords from keywords field if exists
+    if (resume.keywords && Array.isArray(resume.keywords)) {
+      keywords.push(...resume.keywords.map(k => k.value || k));
+    }
+
+    // Get skills if exists
+    if (resume.skills && Array.isArray(resume.skills)) {
+      keywords.push(...resume.skills.map(s => s.value || s));
+    }
+
+    // Get tools if exists
+    if (resume.tools && Array.isArray(resume.tools)) {
+      keywords.push(...resume.tools.map(t => t.value || t));
+    }
+
+    // Get languages if exists
+    if (resume.languages && Array.isArray(resume.languages)) {
+      keywords.push(...resume.languages.map(l => l.value || l));
+    }
+
+    // Get interests if exists
+    if (resume.interests && Array.isArray(resume.interests)) {
+      keywords.push(...resume.interests.map(i => i.value || i));
+    }
+
+    // Get publications if exists
+    if (resume.publications && Array.isArray(resume.publications)) {
+      resume.publications.forEach((pub: any) => {
+        if (pub.field) keywords.push(pub.field);
+      });
+    }
+
+    // Get organizations if exists
+    if (resume.organizations && Array.isArray(resume.organizations)) {
+      resume.organizations.forEach((org: any) => {
+        if (org.field) keywords.push(org.field);
+      });
+    }
+
+    // Get education if exists
+    if (resume.education && Array.isArray(resume.education)) {
+      resume.education.forEach((edu: any) => {
+        if (edu.field) keywords.push(edu.field);
+      });
+    }
+
+    // Get certificates if exists
+    if (resume.certifications && Array.isArray(resume.certifications)) {
+      resume.certifications.forEach((cert: any) => {
+        if (cert.name) keywords.push(cert.name);
+      });
+    }
+
+    // Get projects if exists
+    if (resume.projects && Array.isArray(resume.projects)) {
+      resume.projects.forEach((proj: any) => {
+        if (proj.name) keywords.push(proj.name);
+      });
+    }
+
+    // Get volunteer if exists
+    if (resume.volunteer && Array.isArray(resume.volunteer)) {
+      resume.volunteer.forEach((vol: any) => {
+        if (vol.position) keywords.push(vol.position);
+      });
+    }
+
+    // Get awards if exists
+    if (resume.awards && Array.isArray(resume.awards)) {
+      resume.awards.forEach((award: any) => {
+        if (award.name) keywords.push(award.name);
+      });
+    }
+
+    // Get references if exists
+    if (resume.references && Array.isArray(resume.references)) {
+      resume.references.forEach((ref: any) => {
+        if (ref.name) keywords.push(ref.name);
+      });
+    }
+
+    // Get urls if exists
+    if (resume.urls && Array.isArray(resume.urls)) {
+      resume.urls.forEach((url: any) => {
+        if (url.name) keywords.push(url.name);
+      });
+    }
+
+    // Get social if exists
+    if (resume.social && Array.isArray(resume.social)) {
+      resume.social.forEach((social: any) => {
+        if (social.network) keywords.push(social.network);
+      });
+    }
+
+    // Get contact info
+    if (resume.basics) {
+      if (resume.basics.email) keywords.push("Email");
+      if (resume.basics.phone) keywords.push("Phone");
+      if (resume.basics.url) keywords.push("Website");
+      if (resume.basics.location) {
+        if (resume.basics.location.city) keywords.push(resume.basics.location.city);
+        if (resume.basics.location.region) keywords.push(resume.basics.location.region);
+      }
+    }
+
+    // Remove duplicates and limit to 10
+    return [...new Set(keywords)].slice(0, 10);
+  };
+
   const getNameOptions = () => {
     const nameCounts: Record<string, number> = {};
     const options = resumes
@@ -76,6 +190,14 @@ export function ResumeDisplay() {
 
       <div className="flex gap-4">
         <Button onClick={handleExportJSON}>Export as JSON</Button>
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-sm text-slate-400">Keywords:</span>
+          {getKeywords().map((kw, i) => (
+            <span key={i} className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+              {kw}
+            </span>
+          ))}
+        </div>
       </div>
 
       {html ? (
