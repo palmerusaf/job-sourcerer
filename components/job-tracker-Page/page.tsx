@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { eq } from 'drizzle-orm';
@@ -47,11 +47,13 @@ export function JobTrackerPage() {
     });
   }, [data, tabValue, companySearchParam]);
 
+  const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
     data: filteredData,
     columns,
-    state: { rowSelection: selRowState },
+    state: { rowSelection: selRowState, sorting },
     onRowSelectionChange: setSelRowState,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
   });

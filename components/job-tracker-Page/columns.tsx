@@ -7,7 +7,7 @@ import {
   jobStatusHistoryTable,
   jobTable,
 } from '@/utils/db/schema';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, SortingState } from '@tanstack/react-table';
 import { JobModal } from '../job-modal';
 import { Pencil } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -20,7 +20,7 @@ import { Checkbox } from '../ui/checkbox';
 import { AsyncButton } from '../async-button';
 import { removeTrackedJob } from '@/utils/storage/trackedJobs';
 
-export const columns: ColumnDef<JobWithScoreType>[] = [
+export const columns: ColumnDef<JobWithScoreType, SortingState>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -54,10 +54,12 @@ export const columns: ColumnDef<JobWithScoreType>[] = [
       const imgUrl = !companyLogoUrl?.length ? logo : companyLogoUrl;
       return <img className='ml-2 w-7 h-7' src={imgUrl} />;
     },
+    enableSorting: false,
   },
   {
     accessorKey: 'companyName',
     header: 'Company',
+    enableSorting: true,
   },
   {
     accessorKey: 'title',
@@ -73,6 +75,7 @@ export const columns: ColumnDef<JobWithScoreType>[] = [
         </div>
       );
     },
+    enableSorting: false,
   },
   {
     cell: ({
@@ -85,6 +88,7 @@ export const columns: ColumnDef<JobWithScoreType>[] = [
       </div>
     ),
     header: 'Location',
+    enableSorting: true,
   },
   {
     header: 'Status Date',
@@ -95,6 +99,7 @@ export const columns: ColumnDef<JobWithScoreType>[] = [
     }) => {
       return new Date(statusChangeDate).toLocaleDateString();
     },
+    enableSorting: true,
   },
   {
     accessorKey: 'payrate',
@@ -104,6 +109,7 @@ export const columns: ColumnDef<JobWithScoreType>[] = [
         original: { payrate, payType },
       },
     }) => <PayRate payrate={payrate} payType={payType} />,
+    enableSorting: true,
   },
   {
     accessorKey: 'status',
@@ -124,10 +130,12 @@ export const columns: ColumnDef<JobWithScoreType>[] = [
         }
       />
     ),
+    enableSorting: true,
   },
   {
     header: 'Resume',
     cell: ({ row: { original } }) => <ResumeMatchesModal jobData={original} />,
+    enableSorting: false,
   },
   {
     header: 'Actions',
@@ -142,6 +150,7 @@ export const columns: ColumnDef<JobWithScoreType>[] = [
         ]}
       />
     ),
+    enableSorting: false,
   },
 ];
 
