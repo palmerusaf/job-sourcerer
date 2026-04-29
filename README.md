@@ -116,73 +116,7 @@ Simplify the job/internship application process by centralizing jobs/resumes in 
 
 ## Usage
 
-### Quick Overview
-
-1. Install the extension via Chrome or Firefox.
-2. Sign in to Handshake.
-3. Use the extension popup to add jobs from handshake.
-4. Use the extension popup to navigate to your job dashboard to track/manage your jobs/resumes.
-
-### Adding Comments To Jobs
-
-Comments can be added to jobs through the action drop down menu attached to each job on the job tracker page.
-
-### Archiving Jobs
-
-Jobs can be archived through the action menu. Additionally, multiple jobs can be archived at the same time by using the checkboxes on the left-hand side of the job. Clicking the checkboxes brings up the multi-select menu. Once archived, jobs will become read only and can only be viewed from the archive page. Jobs can be unarchived from this page.
-
-### Deleting Jobs
-
-Jobs can be deleted from the action menu on the job tracker page, the action menu on the archive page, or from the multi-select menu on the job tracker/archive page.
-
-### Deleting Resumes
-
-Resumes can be deleted on the delete resumes page. Once a resume is deleted it is also unlinked to all jobs it was linked to. Stats for this resume will also be deleted.
-
-### Linking Resumes
-
-Resumes can be linked to a job by clicking the link button under the resume column on the job tracker. Resume can also be updated by clicking on the resume match score.
-
-### Sidebar
-
-You can navigate to different pages through the sidebar on the left-hand side of the dashboard. This sidebar can also be folded. Pages are organized into different categories. These categories can be expanded to access individual pages.
-
-### Job Tracker
-
-The job tracker displays all non-archived jobs currently being tracked. You can filter jobs by status through the status tab at the top. Additionally, you can view a jobs details under the job's action sub-menu.
-
-### Multi-Select Menu
-
-While on the job tracker page you can click on a job's checkbox to activate the multi-select menu. Actions taken in this menu will affect all selected jobs.
-
-### Updating Job Status
-
-You can update a job's status by clicking on the status and selecting a new status from the drop-down menu. You can also update the status of multiple jobs through the multi-select menu.
-
-### Uploading Resumes
-
-There are two ways get a resume into the dashboard. You can create a new resume through the resume builder, or you can upload the raw resume text from an existing external resume. Once a resume is uploaded a keyword matching algorithm is used to score the resume against a job.
-
-### Keyword Matching Strategy
-
-The keyword matching strategy can be configured in the Matching Settings page. You can choose between:
-- **IDF-TF**: Uses statistical term weighting with TF-IDF scoring
-- **Hardcoded Keywords**: Uses predefined important keywords with boosted weights
-- **Hybrid**: Uses a weighted combination of SBERT, TF-IDF, and keyword matching
-
-This setting is stored in the database and applies to all resume matching calculations.
-
-### Semantic Text Matching (SBERT)
-
-Job Sourcerer now uses SBERT (Sentence-BERT) for semantic text similarity matching. This allows for more accurate matching of resumes to job descriptions by understanding the semantic meaning of the text rather than just keyword matching. The SBERT model is loaded from Hugging Face Hub and runs locally in your browser.
-
-### Viewing Previous Applications
-
-You can view previous applied jobs on the previous apps page. This will include all jobs that have the status of applied, interview scheduled, rejected, ghosted, or received offer regardless of if the job is archived. This list is grouped by company name. You can filter by company with the search bar.
-
-### Viewing Stats
-
-Once you have used the application you can view stats for jobs and resumes. These stats are calculated on the fly based on each job/resume. This means if a job or resume is deleted the underlying stats for that item won't be retained.
+For detailed usage instructions, please see [USAGE.md](./USAGE.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
