@@ -50,6 +50,24 @@ export function cleanText(text: string): string {
 }
 
 /**
+ * Global cached pipeline instance for SBERT
+ * Caching ensures consistent model loading and better performance
+ */
+let cachedExtractor: any = null;
+
+/**
+ * Get or create the cached SBERT pipeline instance
+ */
+async function getExtractor(): Promise<any> {
+  if (!cachedExtractor) {
+    cachedExtractor = await pipeline('feature-extraction', SBERT_MODEL_ID, {
+      quantized: false, // Use full precision model for better accuracy
+    } as PretrainedOptions);
+  }
+  return cachedExtractor;
+}
+
+/**
  * Calculate semantic similarity between two texts using SBERT
  *
  * @param text1 - First text (job description)
@@ -65,11 +83,8 @@ export async function calculateSbertSimilarity(
     const cleanedText1 = cleanText(text1);
     const cleanedText2 = cleanText(text2);
 
-    // Create feature extraction pipeline for SBERT
-    // Use from_pretrained with URL to load model from Hugging Face Hub
-    const extractor = await pipeline('feature-extraction', SBERT_MODEL_ID, {
-      quantized: true, // Use quantized model for faster inference
-    } as PretrainedOptions);
+    // Get cached extractor instance
+    const extractor = await getExtractor();
 
     // Get embeddings for both texts
     const embeddings1 = await extractor(cleanedText1, {
@@ -92,7 +107,9 @@ export async function calculateSbertSimilarity(
     );
 
     // Return similarity score (already normalized)
-    return Math.max(0, Math.min(1, similarity));
+    const score = Math.max(0, Math.min(1, similarity));
+    console.log('[SBERT] Similarity score:', score.toFixed(4));
+    return score;
   } catch (error) {
     console.error('Error calculating SBERT similarity:', error);
     // Return a default low score on error
@@ -120,7 +137,7 @@ export async function calculateSbertSimilarityWithPipeline(
         'feature-extraction',
         SBERT_MODEL_ID,
         {
-          quantized: true,
+          quantized: false, // Use full precision model for better accuracy
         } as PretrainedOptions
       );
 
@@ -188,6 +205,6 @@ export function getSbertConfig(): {
     modelId: SBERT_MODEL_ID,
     pooling: 'mean',
     normalize: true,
-    quantized: true,
+    quantized: false,
   };
 }
