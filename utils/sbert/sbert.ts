@@ -31,8 +31,12 @@ export function cleanText(text: string): string {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)))
-    .replace(/&#([0-9]+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)));
+    .replace(/&#x([0-9a-fA-F]+);/g, (match, hex) =>
+      String.fromCharCode(parseInt(hex, 16))
+    )
+    .replace(/&#([0-9]+);/g, (match, dec) =>
+      String.fromCharCode(parseInt(dec, 10))
+    );
 
   // Normalize whitespace (multiple spaces/newlines to single space)
   const normalized = withoutEntities.replace(/\s+/g, ' ').trim();
@@ -190,21 +194,4 @@ export async function calculateSbertSimilarityWithPipeline(
     // Return a default low score on error
     return 0;
   }
-}
-
-/**
- * Get the SBERT model configuration
- */
-export function getSbertConfig(): {
-  modelId: string;
-  pooling: string;
-  normalize: boolean;
-  quantized: boolean;
-} {
-  return {
-    modelId: SBERT_MODEL_ID,
-    pooling: 'mean',
-    normalize: true,
-    quantized: false,
-  };
 }
