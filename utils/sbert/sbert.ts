@@ -1,8 +1,4 @@
-import {
-  pipeline,
-  type PretrainedOptions,
-  type Tensor,
-} from '@xenova/transformers';
+import { pipeline, type PretrainedOptions } from '@xenova/transformers';
 import DOMPurify from 'dompurify';
 
 // SBERT model for semantic similarity calculation
@@ -114,81 +110,6 @@ export async function calculateSbertSimilarity(
     const score = Math.max(0, Math.min(1, similarity));
     console.log('[SBERT] Similarity score:', score.toFixed(4));
     return score;
-  } catch (error) {
-    console.error('Error calculating SBERT similarity:', error);
-    // Return a default low score on error
-    return 0;
-  }
-}
-
-/**
- * Calculate semantic similarity using a cached pipeline instance
- *
- * @param text1 - First text (job description)
- * @param text2 - Second text (resume)
- * @param extractor - Optional pre-loaded pipeline instance
- * @returns Similarity score between 0 and 1
- */
-export async function calculateSbertSimilarityWithPipeline(
-  text1: string,
-  text2: string,
-  extractor?: any
-): Promise<number> {
-  try {
-    if (!extractor) {
-      // Load pipeline on first call
-      const pipelineInstance = await pipeline(
-        'feature-extraction',
-        SBERT_MODEL_ID,
-        {
-          quantized: false, // Use full precision model for better accuracy
-        } as PretrainedOptions
-      );
-
-      // Get embeddings for both texts
-      const embeddings1 = await pipelineInstance(text1, {
-        pooling: 'mean',
-        normalize: true,
-      });
-
-      const embeddings2 = await pipelineInstance(text2, {
-        pooling: 'mean',
-        normalize: true,
-      });
-
-      // Calculate cosine similarity between embeddings
-      const similarity = (embeddings1.data as number[]).reduce(
-        (acc, val, idx) => {
-          return acc + val * (embeddings2.data as number[])[idx];
-        },
-        0
-      );
-
-      // Return similarity score (already normalized)
-      return Math.max(0, Math.min(1, similarity));
-    } else {
-      // Use provided pipeline instance
-      const embeddings1 = await extractor(text1, {
-        pooling: 'mean',
-        normalize: true,
-      });
-
-      const embeddings2 = await extractor(text2, {
-        pooling: 'mean',
-        normalize: true,
-      });
-
-      // Calculate cosine similarity between embeddings
-      const similarity = (embeddings1.data as number[]).reduce(
-        (acc, val, idx) => {
-          return acc + val * (embeddings2.data as number[])[idx];
-        },
-        0
-      );
-
-      // Return similarity score (already normalized)
-      return Math.max(0, Math.min(1, similarity));
-    }
   } catch (error) {
     console.error('Error calculating SBERT similarity:', error);
     // Return a default low score on error
