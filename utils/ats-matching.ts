@@ -53,7 +53,7 @@ export async function calculateCosineSimilarity(
   );
   console.log({ keywordScore });
 
-  if (enableSbert) {
+  if (enableSbert && keywordScore > 30) {
     const sbertScore = await calculateSbertSimilarity(
       cleanedJobDescription,
       cleanedResumeText
