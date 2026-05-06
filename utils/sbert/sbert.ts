@@ -85,7 +85,7 @@ export async function calculateSbertSimilarity(
 ): Promise<number> {
   try {
     // Clean input text to remove HTML and normalize
-    const cleanJobDesc = truncate(cleanText(jobDesc));
+    const cleanJobDesc = cleanText(jobDesc);
     const cleanResume = cleanText(resume);
 
     // Get cached extractor instance
