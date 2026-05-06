@@ -53,11 +53,16 @@ export async function calculateCosineSimilarity(
   );
   console.log({ keywordScore });
 
-  if (enableSbert && keywordScore > 30) {
-    const sbertScore = await calculateSbertSimilarity(
-      cleanedJobDescription,
-      cleanedResumeText
-    );
+  if (enableSbert) {
+    // if they keyword score is low don't waste compute on
+    // sbert because it won't make a difference, just set the score to 0
+    const sbertScore =
+      keywordScore < 30
+        ? 0
+        : await calculateSbertSimilarity(
+          cleanedJobDescription,
+          cleanedResumeText
+        );
     // Combine keyword score and SBERT score with reasonable weighting
     return Math.round(keywordScore * 0.25 + sbertScore * 0.75);
   }
