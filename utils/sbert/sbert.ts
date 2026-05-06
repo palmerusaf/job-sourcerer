@@ -112,8 +112,9 @@ export async function calculateSbertSimilarity(
     }, 0);
 
     // Return similarity score (already normalized)
-    const score = Math.max(0, Math.min(1, similarity));
-    console.log('[SBERT] Similarity score:', score.toFixed(4));
+    const score = Math.round(Math.max(0, Math.min(1, similarity)) * 100);
+    console.log('sbert', { score });
+
     return score;
   } catch (error) {
     console.error('Error calculating SBERT similarity:', error);
