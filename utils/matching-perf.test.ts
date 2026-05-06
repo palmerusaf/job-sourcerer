@@ -147,7 +147,7 @@ function expectWithinRange({
 }
 
 describe('keywordMatcher accuracy performance tests', () => {
-  const score = calculateCosineSimilarity(sampleJobPost, sampeResume);
+  const score = calculateCosineSimilarity(sampleJobPost, sampeResume, true, 'idf-tf');
   test('score is integer', () => {
     expect(Number.isInteger(score)).toBe(true);
   });

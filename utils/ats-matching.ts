@@ -35,13 +35,10 @@ export function getTopNKeywords({
 
 export async function calculateCosineSimilarity(
   jobDescription: string,
-  resumeText: string
+  resumeText: string,
+  enableSbert: boolean,
+  keywordStrategy: 'idf-tf' | 'hardcoded' | 'hybrid'
 ): Promise<number> {
-  const [{ enableSbert, keywordStrategy }] = await db
-    .select()
-    .from(matchingAlgoSettingsTable)
-    .limit(1);
-
   // Clean both texts to remove HTML and normalize
   const cleanedJobDescription = cleanText(jobDescription);
   const cleanedResumeText = cleanText(resumeText);

@@ -23,7 +23,9 @@ export async function getSavedJobs() {
           ? -1
           : await calculateCosineSimilarity(
             i.jobs.description,
-            i.raw_resumes.rawText
+            i.raw_resumes.rawText,
+            enableSbert,
+            keywordStrategy
           ),
       };
     })
