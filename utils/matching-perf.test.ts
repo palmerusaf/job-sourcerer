@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { calculateCosineSimilarity } from './extractKeywords.ts';
+import { calculateCosineSimilarity } from './ats-matching.ts';
 
 const sampleJobPost = `
 🚀 Hey there! We’re OrderIQ, a restaurant tech startup redefining the point-of-sale experience. Fresh off our pre-seed round, we’re building a modern, offline-first iPad POS system using React Native, and we’re looking for our next engineers to help bring it to life. If you're passionate about crafting high-performance apps for real-world use in a modern tech-stack, we’d love to talk.
@@ -146,8 +146,13 @@ function expectWithinRange({
   expect(received).toBeLessThanOrEqual(sampleMatchRate + tolerance);
 }
 
-describe('keywordMatcher accuracy performance tests', () => {
-  const score = calculateCosineSimilarity(sampleJobPost, sampeResume, true, 'idf-tf');
+describe('keywordMatcher accuracy performance tests', async () => {
+  const score = await calculateCosineSimilarity(
+    sampleJobPost,
+    sampeResume,
+    true,
+    'idf-tf'
+  );
   test('score is integer', () => {
     expect(Number.isInteger(score)).toBe(true);
   });
