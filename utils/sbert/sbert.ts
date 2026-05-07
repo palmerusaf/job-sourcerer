@@ -1,5 +1,4 @@
 import { pipeline, type PretrainedOptions } from '@xenova/transformers';
-import DOMPurify from 'dompurify';
 
 // SBERT model for semantic similarity calculation
 // Using a pre-trained sentence-transformers model for semantic text matching
@@ -14,11 +13,8 @@ export const SBERT_MODEL_ID = 'Xenova/all-MiniLM-L6-v2';
 export function cleanText(text: string): string {
   if (!text) return '';
 
-  // Use DOMPurify to safely parse and sanitize HTML
-  const parsed = DOMPurify.sanitize(text);
-
   // Remove remaining HTML tags
-  const withoutHtml = parsed.replace(/<[^>]*>/g, '');
+  const withoutHtml = text.replace(/<[^>]*>/g, '');
 
   // Remove HTML entities and convert to plain text
   const withoutEntities = withoutHtml
