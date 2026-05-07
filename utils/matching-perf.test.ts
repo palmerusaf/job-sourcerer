@@ -151,7 +151,7 @@ describe('keywordMatcher accuracy performance tests', async () => {
     sampleJobPost,
     sampeResume,
     true,
-    'idf-tf'
+    'hybrid'
   );
   test('score is integer', () => {
     expect(Number.isInteger(score)).toBe(true);
