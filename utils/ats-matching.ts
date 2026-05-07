@@ -1,8 +1,6 @@
 import Similarity from 'compute-cosine-similarity';
 import idf from './idf.json' with { type: 'json' };
 import importantKeywordsArray from './important-keywords.json' with { type: 'json' };
-import { matchingAlgoSettingsTable } from './db/schema';
-import { db } from './db/db';
 import { calculateSbertSimilarity, cleanText } from './sbert/sbert';
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
