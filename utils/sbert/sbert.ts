@@ -96,9 +96,9 @@ export async function calculateSbertSimilarity(
     const resumeEmb = resumeEmbCache.has(cleanResume)
       ? resumeEmbCache.get(cleanResume)
       : await extractor(cleanResume, {
-        pooling: 'mean',
-        normalize: true,
-      });
+          pooling: 'mean',
+          normalize: true,
+        });
     resumeEmbCache.set(cleanResume, resumeEmb);
 
     // Calculate cosine similarity between embeddings
@@ -109,7 +109,6 @@ export async function calculateSbertSimilarity(
 
     // Return similarity score (already normalized)
     const score = Math.round(Math.max(0, Math.min(1, similarity)) * 100);
-    console.log('sbert', { score });
 
     return score;
   } catch (error) {

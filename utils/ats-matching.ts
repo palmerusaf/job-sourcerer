@@ -47,7 +47,6 @@ export async function calculateCosineSimilarity(
     cleanedResumeText,
     keywordStrategy
   );
-  console.log({ keywordScore });
 
   // if they keyword score is low don't waste compute on
   // sbert because it won't make a difference
