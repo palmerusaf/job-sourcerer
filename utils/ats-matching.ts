@@ -1,9 +1,8 @@
 import Similarity from 'compute-cosine-similarity';
 import idf from './idf.json' with { type: 'json' };
 import importantKeywordsArray from './important-keywords.json' with { type: 'json' };
-import { matchingAlgoSettingsTable } from './db/schema';
-import { db } from './db/db';
 import { calculateSbertSimilarity, cleanText } from './sbert/sbert';
+import { removeStopwords } from 'stopword';
 
 const TOKEN_REGEX = /\b[a-zA-Z][a-zA-Z0-9+#.\-]{2,}\b/g;
 
@@ -35,13 +34,10 @@ export function getTopNKeywords({
 
 export async function calculateCosineSimilarity(
   jobDescription: string,
-  resumeText: string
+  resumeText: string,
+  enableSbert: boolean,
+  keywordStrategy: 'idf-tf' | 'hardcoded' | 'hybrid'
 ): Promise<number> {
-  const [{ enableSbert, keywordStrategy }] = await db
-    .select()
-    .from(matchingAlgoSettingsTable)
-    .limit(1);
-
   // Clean both texts to remove HTML and normalize
   const cleanedJobDescription = cleanText(jobDescription);
   const cleanedResumeText = cleanText(resumeText);
@@ -51,15 +47,16 @@ export async function calculateCosineSimilarity(
     cleanedResumeText,
     keywordStrategy
   );
-  console.log({ keywordScore });
 
-  if (enableSbert) {
+  // if they keyword score is low don't waste compute on
+  // sbert because it won't make a difference
+  if (enableSbert && keywordScore > 15) {
     const sbertScore = await calculateSbertSimilarity(
       cleanedJobDescription,
       cleanedResumeText
     );
     // Combine keyword score and SBERT score with reasonable weighting
-    return Math.round(keywordScore * 0.25 + sbertScore * 0.75);
+    return Math.round(keywordScore * 0.4 + sbertScore * 0.6);
   }
   return keywordScore;
 }
@@ -105,8 +102,9 @@ function _getKeywordScore(
 function _withHardcoded(text: string): Map<string, number> {
   const counts = new Map<string, number>();
 
-  // tokenize (aligned with your Python token_pattern)
-  const tokens = text.toLowerCase().match(TOKEN_REGEX) ?? [];
+  const rawTokens = text.toLowerCase().match(TOKEN_REGEX) ?? [];
+
+  const tokens = removeStopwords(rawTokens);
 
   for (const word of tokens) {
     counts.set(word, (counts.get(word) ?? 0) + 1);
@@ -123,41 +121,31 @@ function _withHardcoded(text: string): Map<string, number> {
 function _withIdf(text: string): Map<string, number> {
   const counts = new Map<string, number>();
 
-  // tokenize (aligned with your Python token_pattern)
-  const tokens = _genFeat(text.toLowerCase().match(TOKEN_REGEX) ?? []);
+  const rawTokens = text.toLowerCase().match(TOKEN_REGEX) ?? [];
 
-  for (const word of tokens) {
-    counts.set(word, (counts.get(word) ?? 0) + 1);
+  const tokens = removeStopwords(rawTokens);
+
+  // unigram weighting
+  for (const token of tokens) {
+    counts.set(token, (counts.get(token) ?? 0) + 3);
   }
 
-  // convert TF → TF-IDF
+  // lower-weight bigrams
+  for (let i = 0; i < tokens.length - 1; i++) {
+    const bigram = `${tokens[i]} ${tokens[i + 1]}`;
+    counts.set(bigram, (counts.get(bigram) ?? 0) + 1);
+  }
+
   const tfidf = new Map<string, number>();
 
   for (const [word, count] of counts) {
     const tf = 1 + Math.log(count);
-    const weight = tf * (idf[word as keyof typeof idf] ?? 0);
 
-    tfidf.set(word, weight);
+    // fallback weight for unseen terms
+    const idfWeight = idf[word as keyof typeof idf] ?? 1.5;
+
+    tfidf.set(word, tf * idfWeight);
   }
 
   return tfidf;
-
-  function _genFeat(tokens: string[]): string[] {
-    const features: string[] = [];
-
-    for (let i = 0; i < tokens.length; i++) {
-      const a = tokens[i];
-      const b = tokens[i + 1];
-
-      // unigram
-      features.push(a);
-
-      // bigram
-      if (b) {
-        features.push(`${a} ${b}`);
-      }
-    }
-
-    return features;
-  }
 }

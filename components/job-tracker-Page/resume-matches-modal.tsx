@@ -9,7 +9,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { db } from '@/utils/db/db';
-import { JobWithScoreType, jobTable, rawResumes } from '@/utils/db/schema';
+import {
+  JobWithScoreType,
+  jobTable,
+  rawResumes,
+  matchingAlgoSettingsTable,
+} from '@/utils/db/schema';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { eq } from 'drizzle-orm';
 import { Loader2, Pencil } from 'lucide-react';
@@ -20,9 +25,9 @@ import { Loading } from '@/entrypoints/spa/App';
 export function ResumeMatchesModal({ jobData }: { jobData: JobWithScoreType }) {
   const { resumeId, description } = jobData;
   const qc = useQueryClient();
-  const { data, isPending } = useQuery({
+  const { data: resumeData, isPending } = useQuery({
     queryKey: ['savedJobs', { resumeId, description }],
-    queryFn: getData,
+    queryFn: async () => await db.select().from(rawResumes),
   });
   if (isPending) return <Loader2 className='mr-2 w-4 h-4 animate-spin' />;
   const triggerLabel =
@@ -44,7 +49,7 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobWithScoreType }) {
         <DialogHeader>
           <DialogTitle>Link Resume to Job</DialogTitle>
           <DialogDescription>
-            {!data?.length ? 'No uploaded Resumes' : <List />}
+            {!resumeData?.length ? 'No uploaded Resumes' : <List />}
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
@@ -63,17 +68,27 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobWithScoreType }) {
         score: number;
       }[]
     >([]);
+    // TODO: extract to function and clear this key in settings page
+    const { data: algoSettingsData } = useQuery({
+      queryKey: ['matchingAlgoSettings'],
+      queryFn: () => db.select().from(matchingAlgoSettingsTable).limit(1),
+    });
     useEffect(() => {
-      if (!data) return;
+      if (!resumeData || !algoSettingsData) return;
       Promise.all(
-        data.map(async (item) => {
+        resumeData.map(async (resume) => {
           return {
-            score: await calculateCosineSimilarity(item.rawText, description),
-            ...item,
+            score: await calculateCosineSimilarity(
+              resume.rawText,
+              description,
+              algoSettingsData[0].enableSbert,
+              algoSettingsData[0].keywordStrategy
+            ),
+            ...resume,
           };
         })
       ).then((res) => set_Data(res.sort((a, b) => b.score - a.score)));
-    }, [data, description]);
+    }, [resumeData, description, algoSettingsData]);
     if (!_data.length)
       return (
         <div>
@@ -113,10 +128,6 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobWithScoreType }) {
         </div>
       </>
     );
-  }
-
-  async function getData() {
-    return await db.select().from(rawResumes);
   }
 }
 
