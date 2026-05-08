@@ -12,35 +12,34 @@ export function ArchiveResumePage() {
 
   if (isPending)
     return (
-      <div className='flex items-center justify-center h-full'>
-        <div className='text-xl text-slate-500 animate-pulse'>Loading...</div>
+      <div className='flex justify-center items-center h-full'>
+        <div className='text-xl animate-pulse text-slate-500'>Loading...</div>
       </div>
     );
 
   if (!data || data.length === 0)
     return (
-      <div className='flex items-center justify-center h-full'>
+      <div className='flex justify-center items-center h-full'>
         <div className='text-xl text-slate-500'>No Data available</div>
       </div>
     );
 
   return (
-    <div className='max-h-full pb-6'>
-      <div className='mx-auto overflow-y-auto max-w-2xl gap-2 grid grid-cols-2'>
+    <div className='pb-6 max-h-full'>
+      <div className='grid overflow-y-auto grid-cols-2 gap-2 mx-auto max-w-2xl'>
         <span className='text-xl font-bold'>Resume Name</span>
         <span></span>
-        {data.map(({ id, name, archived }) => {
+        {data.map(({ id, name, archived: prevArchivedStatus }) => {
           return (
             <>
-              <span className='text-lg my-auto'>{name}</span>
+              <span className='my-auto text-lg'>{name}</span>
               <AsyncButton
-                variant={archived ? 'default' : 'destructive'}
+                variant={prevArchivedStatus ? 'outline' : 'secondary'}
                 onClickAsync={async () => {
-                  if (archived) {
-                    await db.update(resumes).set({ archived: false }).where(eq(resumes.id, id));
-                  } else {
-                    await db.update(resumes).set({ archived: true }).where(eq(resumes.id, id));
-                  }
+                  await db
+                    .update(resumes)
+                    .set({ archived: !prevArchivedStatus })
+                    .where(eq(resumes.id, id));
                   await qc.invalidateQueries({
                     queryKey: ['savedJobs'],
                     exact: false,
@@ -50,7 +49,7 @@ export function ArchiveResumePage() {
                   });
                 }}
               >
-                {archived ? 'Unarchive' : 'Archive'}
+                {prevArchivedStatus ? 'Unarchive' : 'Archive'}
               </AsyncButton>
             </>
           );
