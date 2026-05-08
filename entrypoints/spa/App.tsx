@@ -55,16 +55,20 @@ export default function App() {
             icon: icon.Pencil,
             items: [
               {
-                subMenu: 'Upload Resume',
+                subMenu: 'Upload',
                 content: <ResumeUpload />,
               },
               {
-                subMenu: 'Display Resume',
+                subMenu: 'Display',
                 content: <ResumeDisplay />,
               },
               {
-                subMenu: 'Delete Resumes',
+                subMenu: 'Delete',
                 content: <DeleteResumePage />,
+              },
+              {
+                subMenu: 'Archive/Unarchive',
+                content: <ArchiveResumePage />,
               },
             ],
           },

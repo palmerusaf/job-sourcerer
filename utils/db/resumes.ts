@@ -57,5 +57,6 @@ export async function listResumeStatusCounts() {
         })
         .from(jobTable)
         .leftJoin(resumes, eq(jobTable.resumeId, resumes.id))
+        .where(eq(resumes.archived, false))
         .groupBy(jobTable.resumeId, resumes.name, jobTable.status);
 }

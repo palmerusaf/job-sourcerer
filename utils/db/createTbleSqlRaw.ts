@@ -97,4 +97,5 @@ CREATE TABLE "matching_algo_settings" (
 	"keyword_strategy" text DEFAULT 'idf-tf' NOT NULL
 );
 
+ALTER TABLE "resumes" ADD COLUMN "archived" boolean DEFAULT false NOT NULL;
 `;

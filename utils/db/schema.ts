@@ -236,6 +236,7 @@ export const resumes = pgTable('resumes', {
   userId: text('user_id'), // optional owner identifier
   name: text('name').notNull(), // user-chosen label for the saved resume
   json: jsonb('json').notNull(), // full JSON Resume payload
+  archived: boolean('archived').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

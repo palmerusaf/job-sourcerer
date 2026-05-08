@@ -14,6 +14,7 @@ import {
   jobTable,
   rawResumes,
   matchingAlgoSettingsTable,
+  resumes,
 } from '@/utils/db/schema';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { eq } from 'drizzle-orm';
@@ -21,13 +22,28 @@ import { Loader2, Pencil } from 'lucide-react';
 import { Button } from '../ui/button';
 import { calculateCosineSimilarity } from '@/utils/ats-matching';
 import { Loading } from '@/entrypoints/spa/App';
+import { useState, useEffect } from 'react';
 
 export function ResumeMatchesModal({ jobData }: { jobData: JobWithScoreType }) {
   const { resumeId, description } = jobData;
   const qc = useQueryClient();
   const { data: resumeData, isPending } = useQuery({
     queryKey: ['savedJobs', { resumeId, description }],
-    queryFn: async () => await db.select().from(rawResumes),
+    queryFn: async () => {
+      const result = await db
+        .select({
+          id: rawResumes.id,
+          name: rawResumes.name,
+          rawText: rawResumes.rawText,
+          source: rawResumes.source,
+          jsonId: rawResumes.jsonId,
+          createdAt: rawResumes.createdAt,
+        })
+        .from(rawResumes)
+        .innerJoin(resumes, eq(rawResumes.jsonId, resumes.id))
+        .where(eq(resumes.archived, false));
+      return result;
+    },
   });
   if (isPending) return <Loader2 className='mr-2 w-4 h-4 animate-spin' />;
   const triggerLabel =
