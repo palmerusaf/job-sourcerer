@@ -1,0 +1,1 @@
+ALTER TABLE "resumes" ADD COLUMN "archived" boolean DEFAULT false NOT NULL;

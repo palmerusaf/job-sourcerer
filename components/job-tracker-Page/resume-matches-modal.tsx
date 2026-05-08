@@ -14,6 +14,7 @@ import {
   jobTable,
   rawResumes,
   matchingAlgoSettingsTable,
+  resumes,
 } from '@/utils/db/schema';
 import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { eq } from 'drizzle-orm';
@@ -27,7 +28,7 @@ export function ResumeMatchesModal({ jobData }: { jobData: JobWithScoreType }) {
   const qc = useQueryClient();
   const { data: resumeData, isPending } = useQuery({
     queryKey: ['savedJobs', { resumeId, description }],
-    queryFn: async () => await db.select().from(rawResumes),
+    queryFn: async () => await db.select().from(rawResumes).where(eq(resumes.archived, false)),
   });
   if (isPending) return <Loader2 className='mr-2 w-4 h-4 animate-spin' />;
   const triggerLabel =

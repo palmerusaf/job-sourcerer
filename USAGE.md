@@ -102,6 +102,10 @@ Jobs can be deleted from the action menu on the job tracker page, the action men
 
 Resumes can be deleted on the delete resumes page. Once a resume is deleted it is also unlinked to all jobs it was linked to. Stats for this resume will also be deleted.
 
+### Archiving Resumes
+
+Resumes can be archived through the archive resumes page. Archived resumes are still linked to jobs but don't show up in the resume modal. This allows you to keep resumes for reference without cluttering the active resume list. You can unarchive resumes from the archive page.
+
 ### Linking Resumes
 
 Resumes can be linked to a job by clicking the link button under the resume column on the job tracker. Resume can also be updated by clicking on the resume match score.

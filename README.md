@@ -141,6 +141,7 @@ For detailed usage instructions, please see [USAGE.md](./USAGE.md).
   - [x] Import resume through raw text pasting
   - [x] Extract resume keywords
   - [x] Display resume stats
+  - [x] Archive/Unarchive resumes
 
 - Job site integration
   - [x] Add Handshake job to dashboard through popup
